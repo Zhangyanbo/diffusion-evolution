@@ -5,19 +5,19 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="diffevo",
-    version="0.2.3",
+    version="1.0.1",
     author="Yanbo Zhang",
-    author_email="yzhang86@tufts.edu",
+    author_email="zhangybspm@gmail.com",
     description="Diffusion Evolutionary Algorithm",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Zhangyanbo/diffevo",
+    url="https://github.com/Zhangyanbo/diffusion-evolution",
     project_urls={
-        "Bug Tracker": "https://github.com/Zhangyanbo/diffevo/issues",
+        "Bug Tracker": "https://github.com/Zhangyanbo/diffusion-evolution/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
     packages=['diffevo'],
