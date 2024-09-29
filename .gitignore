@@ -3,8 +3,19 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# MacOS
+.DS_Store
+
 # C extensions
 *.so
+
+# Experiments
+*.pdf
+*.pt
+
+# Sketch
+sketch*.*
+*sketch.*
 
 # Distribution / packaging
 .Python
