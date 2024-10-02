@@ -1,14 +1,23 @@
 # Diffusion Evolution
 
-Diffusion models are evolutionary algorithms.
+This repo is for our paper "*Diffusion models are evolutionary algorithms*", which anayatically proves that diffusion models are a type of evolutionary algorithm. This equivalence allows us to leverage advancements in diffusion models for evolutionary algorithm tasks, including accelerated sampling and latent space diffusion.
 
 ![](./experiments/2d_models/two_peaks/images/framwork.jpg)
+
+The Diffusion Evolution framework treats inversed diffusion as evolutionary algorithm, where the population estimates its added noise (or their noise-free states) based on its neighbors' fitness then evolves via denoising. The following figure shows the process on optimizing a two-peak density function. The Diffusion Evolution initially has large neighbor range (shown as blue disk), calculating $x_0$ based on the fitness of its neighbors then move toward estimated $x_0$.
 
 ![](./experiments/2d_models/figures/process.png)
 
 
 ## Install
 
+You can install the package via pip:
+
+```bash
+pip install diffevo
+```
+
+or manually install:
 ```bash
 clone https://github.com/Zhangyanbo/diffusion-evolution
 cd diffevo/
