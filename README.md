@@ -24,6 +24,8 @@ cd diffevo/
 pip install .
 ```
 
+The benchmark fitness functions can be found here: https://github.com/bhartl/foobench 
+
 ## Quick Start
 
 For simple experiments, parameter changes may not be necessary. In such cases, we can use the `DiffEvo` class to simplify the code.
