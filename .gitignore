@@ -17,6 +17,9 @@ __pycache__/
 sketch*.*
 *sketch.*
 
+# Figures
+figures/*
+
 # Distribution / packaging
 .Python
 build/
