@@ -38,5 +38,5 @@ if __name__ == '__main__':
     # save the plot
     plt.tight_layout()
     plt.savefig('./images/benchmark.png')
-    plt.savefig('./images/benchmark.pdf')
+    plt.savefig('./images/benchmark.pdf', transparent=True)
     plt.close()

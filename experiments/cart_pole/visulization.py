@@ -238,5 +238,6 @@ if __name__ == '__main__':
     plt.tight_layout()
 
     plt.savefig('./figures/cartpole.png', bbox_inches='tight')
-    plt.savefig('./figures/cartpole.pdf', bbox_inches='tight')
+    # save as pdf with transparent background
+    plt.savefig('./figures/cartpole.pdf', bbox_inches='tight', transparent=True)
     plt.close()
