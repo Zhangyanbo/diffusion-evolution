@@ -1,5 +1,5 @@
 from benchmarks import plot_background, get_obj
-from hades.es import PEPG
+from es import PEPG
 import numpy as np
 import matplotlib.pyplot as plt
 import torch

@@ -1,4 +1,4 @@
-from hades.es import CMAES
+from es import CMAES
 from matplotlib.patches import Ellipse
 import numpy as np
 import matplotlib.pyplot as plt

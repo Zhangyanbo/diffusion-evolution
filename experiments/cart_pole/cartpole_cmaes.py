@@ -2,7 +2,7 @@
 import torch
 import numpy as np
 from tqdm import tqdm
-from hades.es import CMAES
+from es import CMAES
 
 from cartpole_latent import compute_rewards_list
 
