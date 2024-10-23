@@ -24,6 +24,11 @@ cd diffevo/
 pip install .
 ```
 
+Some benchmark codes requires dependencies, can be installed via:
+```bash
+pip install cma
+```
+
 The benchmark fitness functions can be found here: https://github.com/bhartl/foobench 
 
 ## Typical Usage
