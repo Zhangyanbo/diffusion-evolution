@@ -24,26 +24,7 @@ cd diffevo/
 pip install .
 ```
 
-## Quick Start
-
-For simple experiments, parameter changes may not be necessary. In such cases, we can use the `DiffEvo` class to simplify the code.
-
-```python
-from diffevo import DiffEvo
-import torch
-from diffevo.examples import two_peak_density, two_peak_density_step
-
-optimizer = DiffEvo(noise=0.1)
-
-xT = torch.randn(512, 2)
-x, population_trace, fitness_count = optimizer.optimize(two_peak_density, xT, trace=True)
-```
-
-Output:
-
-```text
-100%|██████████| 99/99 [00:00<00:00, 175.58it/s]
-```
+The benchmark fitness functions can be found here: https://github.com/bhartl/foobench 
 
 ## Typical Usage
 
@@ -98,6 +79,7 @@ for t, alpha in scheduler:
 
 trace = torch.stack(trace)
 ```
+
 
 ### Cite our work
 
