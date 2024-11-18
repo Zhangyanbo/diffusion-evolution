@@ -12,7 +12,7 @@ matplotlib.rcParams['mathtext.fontset'] = 'stix'
 matplotlib.rcParams['font.family'] = 'STIXGeneral'
 
 
-def optimizer(fit_fn, initial_population, scaling=1.0, noise=0.1, num_step=100):
+def optimizer(fit_fn, initial_population, scaling=100.0, noise=0.1, num_step=100):
     x = initial_population
 
     fitness_count = []
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     torch.manual_seed(42)
 
     x0 = torch.randn(512, 2)
-    result_two_peak, x0_trace, scheduler_two_peak = optimizer(two_peak_density, initial_population=x0, scaling=1.5, noise=0.1)
+    result_two_peak, x0_trace, scheduler_two_peak = optimizer(two_peak_density, initial_population=x0, scaling=100.5, noise=0.1)
 
     # save results
     torch.save([result_two_peak, x0_trace, scheduler_two_peak.alpha], './data/two_peak.pt')

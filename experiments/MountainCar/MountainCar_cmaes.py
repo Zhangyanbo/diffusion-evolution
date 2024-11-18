@@ -1,10 +1,11 @@
-"""Cartpole experiments with CMA-ES"""
+"""Acrobat experiments with CMA-ES"""
 import torch
 import numpy as np
 from tqdm import tqdm
 from es import CMAES
+import os
 
-from cartpole_latent import compute_rewards_list
+from experiments.MountainCar.MountainCar_latent import compute_rewards_list
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
@@ -12,7 +13,7 @@ matplotlib.rcParams['font.family'] = 'STIXGeneral'
 
 
 def experiment(num_step, T=1, population_size=256, scaling=100, weight_decay=0, sigma_init=1, **args):
-    es = CMAES(num_params=58, popsize=population_size, weight_decay=weight_decay, sigma_init=sigma_init, inopts={'seed': np.nan, 'CMA_elitist': 2})
+    es = CMAES(num_params=41, popsize=population_size, weight_decay=weight_decay, sigma_init=sigma_init, inopts={'seed': np.nan, 'CMA_elitist': 2})
 
     population = []
     reward_history = []
@@ -22,7 +23,7 @@ def experiment(num_step, T=1, population_size=256, scaling=100, weight_decay=0, 
         pop = es.ask()
         population.append(pop * scaling)
 
-        rewards, obs = compute_rewards_list(4, 2, 8, pop * scaling)
+        rewards, obs = compute_rewards_list(2, 3, 8, pop * scaling)
         fitness = rewards
 
         es.tell(fitness)
@@ -37,6 +38,7 @@ def experiment(num_step, T=1, population_size=256, scaling=100, weight_decay=0, 
 if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
+    os.makedirs("./data/cmaes", exist_ok=True)
 
     num_experiment = 10
 

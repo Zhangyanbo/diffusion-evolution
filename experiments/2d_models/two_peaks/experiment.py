@@ -104,8 +104,8 @@ def make_plot(optimizer, trace, fitnesses, method:str):
 
 if __name__ == '__main__':
     torch.manual_seed(42)
-    optimizer_naive = DiffEvo(num_step=100, scaling=1.5, noise=0)
-    optimizer_ddpm = DiffEvo(num_step=100, scaling=1.5, noise=0.1)
+    optimizer_naive = DiffEvo(num_step=100, scaling=100.5, noise=0)
+    optimizer_ddpm = DiffEvo(num_step=100, scaling=100.5, noise=0.1)
 
     x0 = torch.randn(512, 2)
 

@@ -3,8 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from diffevo import LatentBayesianGenerator, RandomProjection, DDIMSchedulerCosine
 from tqdm import tqdm
+import os
 
-from cartpole_latent import compute_rewards_list
+from experiments.Pendulum.pendulum_latent import compute_rewards_list
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
@@ -24,7 +25,7 @@ def experiment(num_step, T=1, population_size=512, scaling=0.1, noise=1, weight_
     random_map = RandomProjection(17410, 2, normalize=True)
 
     for t, alpha in tqdm(scheduler, total=scheduler.num_step-1):
-        rewards, obs = compute_rewards_list(4, 2, 128, x * scaling, n_hidden_layers=2)
+        rewards, obs = compute_rewards_list(3, 1, 128, x * scaling, n_hidden_layers=2)
         l2 = torch.norm(population[-1], dim=-1) ** 2
         fitness = torch.exp((rewards - rewards.max()) / T - l2 * weight_decay)
 
@@ -36,7 +37,7 @@ def experiment(num_step, T=1, population_size=512, scaling=0.1, noise=1, weight_
         population.append(x * scaling)
         observations.append(obs)
     
-    rewards, obs = compute_rewards_list(4, 2, 128, x * scaling, n_hidden_layers=2)
+    rewards, obs = compute_rewards_list(3, 1, 128, x * scaling, n_hidden_layers=2)
     reward_history.append(rewards)
     observations.append(obs)
 
@@ -60,6 +61,8 @@ def make_plot(reward_history):
 if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
+    os.makedirs("./data/large", exist_ok=True)
+    os.makedirs("./figures", exist_ok=True)
 
     num_experiment = 10
     all_reward_history = []

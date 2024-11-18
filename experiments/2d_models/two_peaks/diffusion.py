@@ -12,7 +12,7 @@ custom_cmap = LinearSegmentedColormap.from_list("custom_cmap", colors)
 
 
 def diffuse(num_population, num_step):
-    optimizer_ddpm = DiffEvo(num_step=num_step, scaling=1.0)
+    optimizer_ddpm = DiffEvo(num_step=num_step, scaling=100.0)
     x0 = torch.randn(num_population, 2)
 
     fitness_func = lambda x: two_peak_density(x, std=0.5)

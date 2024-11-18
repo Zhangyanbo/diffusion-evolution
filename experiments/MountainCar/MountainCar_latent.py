@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from diffevo import LatentBayesianGenerator, RandomProjection, DDIMSchedulerCosine
 import gym
 from tqdm import tqdm
+import os
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
@@ -12,7 +13,7 @@ matplotlib.rcParams['font.family'] = 'STIXGeneral'
 
 
 def compute_rewards(dim_in, dim_out, dim_hidden, param, n_hidden_layers=1):
-    env = gym.make("CartPole-v1", render_mode='rgb_array')
+    env = gym.make("MountainCar-v0", render_mode='rgb_array')
 
     model = ControllerMLP.from_parameter(dim_in, dim_out, dim_hidden, param, n_hidden_layers=n_hidden_layers)
     controller = DiscreteController(model, env.action_space)
@@ -48,17 +49,17 @@ def compute_rewards_list(dim_in, dim_out, dim_hidden, params, n_hidden_layers=1)
 def experiment(num_step, T=1, population_size=512, scaling=0.1, noise=1, weight_decay=0):
     scheduler = DDIMSchedulerCosine(num_step=num_step)
 
-    x = torch.randn(population_size, 58)
+    x = torch.randn(population_size, 51)
 
     reward_history = []
     population = [x * scaling]
     x0_population = [x * scaling]
     observations = []
 
-    random_map = RandomProjection(58, 2, normalize=True)
+    random_map = RandomProjection(51, 2, normalize=True)
 
     for t, alpha in tqdm(scheduler, total=scheduler.num_step-1):
-        rewards, obs = compute_rewards_list(4, 2, 8, x * scaling)
+        rewards, obs = compute_rewards_list(2, 3, 8, x * scaling)
         l2 = torch.norm(population[-1], dim=-1) ** 2
         fitness = torch.exp((rewards - rewards.max()) / T - l2 * weight_decay)
 
@@ -70,7 +71,7 @@ def experiment(num_step, T=1, population_size=512, scaling=0.1, noise=1, weight_
         x0_population.append(x0 * scaling)
         observations.append(obs)
     
-    rewards, obs = compute_rewards_list(4, 2, 8, x * scaling)
+    rewards, obs = compute_rewards_list(2, 3, 8, x * scaling)
     reward_history.append(rewards)
     observations.append(obs)
 
@@ -101,10 +102,10 @@ def make_plot(reward_history):
     plt.legend()
 
 def make_video(para):
-    env = gym.make("CartPole-v1", render_mode="rgb_array")
+    env = gym.make("MountainCar-v0", render_mode="rgb_array")
     env = gym.wrappers.RecordVideo(env=env, video_folder="./figures/", name_prefix="test-video", episode_trigger=lambda x: x % 2 == 0)
 
-    model = ControllerMLP.from_parameter(4, 2, 8, para)
+    model = ControllerMLP.from_parameter(2, 3, 8, para)
     controller = DiscreteController(model, env.action_space)
 
     observation, info = env.reset(seed=42)
@@ -132,6 +133,8 @@ def make_video(para):
 if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
+    os.makedirs("./data/latent", exist_ok=True)
+    os.makedirs("./figures", exist_ok=True)
 
     num_experiment = 10
 
