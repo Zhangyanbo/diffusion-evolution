@@ -133,7 +133,7 @@ def make_video(para):
 if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
-    os.makedirs("./data/raw", exist_ok=True)
+    os.makedirs("./data/latent", exist_ok=True)
     os.makedirs("./figures", exist_ok=True)
 
     num_experiment = 10
