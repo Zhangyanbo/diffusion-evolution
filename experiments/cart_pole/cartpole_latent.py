@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from diffevo import LatentBayesianGenerator, RandomProjection, DDIMSchedulerCosine
 import gym
 from tqdm import tqdm
+import os
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
@@ -132,6 +133,8 @@ def make_video(para):
 if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
+    os.makedirs("./data/raw", exist_ok=True)
+    os.makedirs("./figures", exist_ok=True)
 
     num_experiment = 10
 

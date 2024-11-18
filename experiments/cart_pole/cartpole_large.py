@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from diffevo import LatentBayesianGenerator, RandomProjection, DDIMSchedulerCosine
 from tqdm import tqdm
+import os
 
 from cartpole_latent import compute_rewards_list
 
@@ -60,6 +61,8 @@ def make_plot(reward_history):
 if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
+    os.makedirs('./data/large', exist_ok=True)
+    os.makedirs('./figures', exist_ok=True)
 
     num_experiment = 10
     all_reward_history = []

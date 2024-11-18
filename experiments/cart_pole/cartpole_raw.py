@@ -3,6 +3,7 @@ import torch
 import numpy as np
 from diffevo import DDIMScheduler, BayesianGenerator
 from tqdm import tqdm
+import os
 
 from cartpole_latent import compute_rewards_list
 
@@ -47,6 +48,7 @@ def experiment(num_step, T=1, population_size=512, scaling=0.1, noise=1, weight_
 if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
+    os.makedirs("./data/raw", exist_ok=True)
 
     num_experiment = 10
 

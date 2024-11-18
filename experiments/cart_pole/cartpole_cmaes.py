@@ -3,6 +3,7 @@ import torch
 import numpy as np
 from tqdm import tqdm
 from es import CMAES
+import os
 
 from cartpole_latent import compute_rewards_list
 
@@ -37,6 +38,7 @@ def experiment(num_step, T=1, population_size=256, scaling=100, weight_decay=0, 
 if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
+    os.makedirs('./data/cmaes', exist_ok=True)
 
     num_experiment = 10
 
