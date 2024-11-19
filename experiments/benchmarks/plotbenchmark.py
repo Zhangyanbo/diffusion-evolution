@@ -3,6 +3,7 @@ from cmaes import CMAES_benchmark
 from diff_evo import DiffEvo_benchmark
 from pepg import PEPG_benchmark
 from openes import OpenES_benchmark
+from map_elite import MAPElite_benchmark
 import torch
 import numpy as np
 import random
@@ -32,8 +33,12 @@ if __name__ == '__main__':
     torch.save(record, './data/openes.pt')
 
     # PEPG
-    record = PEPG_benchmark(objs, num_steps=25, row=3, total_row=num_benchmark, plot=True)
-    torch.save(record, './data/pepg.pt')
+    # record = PEPG_benchmark(objs, num_steps=25, row=3, total_row=num_benchmark, plot=True)
+    # torch.save(record, './data/pepg.pt')
+
+    # MAPElite
+    record = MAPElite_benchmark(objs, num_steps=25, row=3, total_row=num_benchmark, plot=True)
+    torch.save(record, './data/map_elite.pt')
 
     # save the plot
     plt.tight_layout()

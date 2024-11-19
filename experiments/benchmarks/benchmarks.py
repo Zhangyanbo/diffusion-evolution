@@ -25,7 +25,10 @@ fitness_target = {
     "beale": 0,
     "himmelblau": 0,
     "ackley": -12.5401,
-    "rastrigin": -64.6249
+    "rastrigin": -64.6249, # x_i = 3.51786
+    "rastrigin_4d": -129.2498,
+    "rastrigin_32d": -1033.9980,
+    "rastrigin_256d": -8271.9844
 }
 
 distance_scale = {
@@ -33,7 +36,10 @@ distance_scale = {
     "beale": 20,
     "himmelblau": 17.01,
     "ackley": 2,
-    "rastrigin": 30
+    "rastrigin": 30,
+    "rastrigin_4d": 60,
+    "rastrigin_32d": 500,
+    "rastrigin_256d": 4000
 }
 
 
@@ -59,7 +65,7 @@ def visualize_2D(objective, ax=None, n_points=100, parameter_range=None, title=N
 def get_cmap(obj_name:str):
     return custom_cmap
 
-def rescale_wrapper(obj, vmin=None, vmax=None):
+def rescale_wrapper(obj, vmin=None, vmax=None, **kwargs):
     if vmin is None or vmax is None:
         return obj
     def rescaled_obj(x):
@@ -67,34 +73,46 @@ def rescale_wrapper(obj, vmin=None, vmax=None):
         return obj(x) - vmin
     return rescaled_obj
 
-def inverse_wrapper(obj, eps=1e-2, p=2):
+def inverse_wrapper(obj, eps=1e-2, p=2, **kwargs):
     def inverse_obj(x):
         return eps / (obj(x) ** p + eps)
     return inverse_obj
 
-def objective_wrapper(obj, target=0, scale=1, eps=1e-3, p=2):
+def objective_wrapper(obj, target=0, scale=1, eps=1e-3, p=2, **kwargs):
     def wrapped_obj(x):
         d = abs(obj(x) - target) / scale
         return eps / (d ** p + eps)
     return wrapped_obj
 
-def energy_wrapper(obj, temperature=1, target=0):
+def energy_wrapper(obj, temperature=0.5, target=0, scale=1, **kwargs):
     def wrapped_obj(x):
-        return torch.exp(-(obj(x) - target) / temperature)
+        return torch.exp(-abs(obj(x) - target) / (temperature * scale))
     return wrapped_obj
 
-def exp_wrapper(obj, temperature=1):
+def exp_wrapper(obj, temperature=1, **kwargs):
     def wrapped_obj(x):
         return torch.exp(obj(x) / temperature)
     return wrapped_obj
 
-def get_obj(obj_name:str, eps=1e-2):
+def _original_name(obj_name:str):
+    if obj_name in ["rastrigin_4d", "rastrigin_32d", "rastrigin_256d"]:
+        return "rastrigin"
+    return obj_name
+
+def get_obj(obj_name:str, eps=1e-2, target=None, scale=None, wrapper=None, **kwargs):
     if obj_name in ["rosenbrock", "beale", "himmelblau"]: # zero as the target
         obj = Objective(foo=obj_name, maximize=False, limit_val=100)
     else: # high values as the target
-        obj = Objective(foo=obj_name, maximize=True, limit_val=1e-9)
+        obj = Objective(foo=_original_name(obj_name), maximize=True, limit_val=1e-9)
     
-    return obj, objective_wrapper(obj, target=fitness_target[obj_name], scale=distance_scale[obj_name], eps=eps)
+    if target is None:
+        target = fitness_target[obj_name]
+    if scale is None:
+        scale = distance_scale[obj_name]
+    
+    if wrapper is None:
+        wrapper = energy_wrapper
+    return obj, wrapper(obj, target=target, scale=scale, eps=eps, **kwargs)
 
 def get_visualize_obj(obj):
     return Objective(foo=obj.foo_name)

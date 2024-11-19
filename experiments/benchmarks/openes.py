@@ -97,7 +97,7 @@ def OpenES_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, sigma_ini
         obj, obj_rescaled = get_obj(foo_name)
 
         es, traj, fitnesses, mu = OpenES_experiment(obj_rescaled, num_steps=num_steps, sigma_init=sigma_init)
-        record[obj.foo_name] = prepare_data(traj, arg, fitnesses)
+        record[foo_name] = prepare_data(traj, arg, fitnesses)
         if plot:
             ax = plt.subplot(total_row, total_col, i + 1 + row * total_col)
             OpenES_plot(obj, es, traj, mu, ax=ax)

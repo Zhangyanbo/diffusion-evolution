@@ -23,6 +23,9 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, n_hidden_layers=1):
 
     for i in range(500):
         action = controller(torch.from_numpy(observation).float())
+        # randomly add noise to the action
+        if np.random.rand() < 0.1:
+            action = 1 - action
         observation, reward, terminated, truncated, info = env.step(action)
         observations.append(observation)
 
@@ -116,6 +119,9 @@ def make_video(para):
 
     for i in range(500):
         action = controller(torch.from_numpy(observation).float())
+        # randomly add noise to the action
+        if np.random.rand() < 0.1:
+            action = 1 - action
         observation, reward, terminated, truncated, info = env.step(action)
         rewards.append(reward)
 
@@ -142,8 +148,8 @@ if __name__ == '__main__':
             num_step=10, 
             population_size=256, 
             T=10, 
-            scaling=1, 
-            noise=1)
+            scaling=100, #!
+            noise=0.1)
         
         all_reward_history.append(reward_history)
         if i == 0:

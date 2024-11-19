@@ -1,16 +1,23 @@
 import matplotlib.pyplot as plt
 import torch
 from tqdm import tqdm
-from diffevo import DDIMScheduler, BayesianGenerator, DDIMSchedulerCosine, DDPMScheduler
+from diffevo import DDIMScheduler, BayesianGenerator, DDIMSchedulerCosine, DDPMScheduler, RandomProjection, LatentBayesianGenerator
 from benchmarks import plot_background, get_obj
-from foobench import Objective
 from color_plate import *
 
 
+def energy_prob_mapping(fitness, temperature):
+    energy = fitness
+    power = -energy / temperature
+    power = power - power.max() # avoid overflow without changing the results
+    p = torch.exp(power)
+    return p
 
-def experiment(obj, num_pop=256, num_step=100, scaling=4.0, temperatures=None, disable_bar=False, dim=2):
+def experiment(obj, num_pop=256, num_step=100, scaling=4.0, latent=True, temperatures=None, disable_bar=False, noise=0.1, dim=2):
     
     scheduler = DDIMSchedulerCosine(num_step=num_step)
+    if latent:
+        random_map = RandomProjection(dim, 2, normalize=True)
 
     x = torch.randn(num_pop, dim)
 
@@ -22,8 +29,11 @@ def experiment(obj, num_pop=256, num_step=100, scaling=4.0, temperatures=None, d
     for t, alpha in tqdm(scheduler, total=num_step-1, disable=disable_bar):
         fitness = obj(x * scaling)
         fitnesses.append(fitness)
-        generator = BayesianGenerator(x, fitness, alpha, density='uniform')
-        x, x0 = generator(noise=0.1, return_x0=True)
+        if latent:
+            generator = LatentBayesianGenerator(x, random_map(x).detach(), fitness, alpha, density='uniform')
+        else:
+            generator = BayesianGenerator(x, fitness, alpha, density='uniform')
+        x, x0 = generator(noise=noise, return_x0=True)
         x0_fit = obj(x0 * scaling)
         x0_fitness.append(x0_fit)
         trace.append(x.clone() * scaling)
@@ -62,7 +72,7 @@ def prepare_data(obj, trace, x0_trace, arg, fitnesses, x0_fitness):
     }
     return info
 
-def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=256, scaling=4.0, plot=False, disable_bar=False, dim=2, **kwargs):
+def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=256, scaling=4.0, plot=False, disable_bar=False, dim=2, eps=1e-3, latent=True, wrapper=None, noise=0.1, **kwargs):
     arg = {
         "limit_val": 100,
         "num_pop": num_pop,
@@ -75,14 +85,16 @@ def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=
     record = dict()
 
     for i, name in enumerate(objs):
-        obj, obj_rescaled = get_obj(name)
+        obj, obj_rescaled = get_obj(name, eps=eps, wrapper=wrapper, **kwargs)
         pop, trace, x0_trace, fitnesses, x0_fitness = experiment(
             obj_rescaled, 
             num_pop=num_pop, 
             num_step=num_steps, 
             scaling=scaling, 
             disable_bar=disable_bar,
-            dim=dim
+            dim=dim,
+            noise=noise,
+            latent=latent
             )
 
         if plot:
@@ -93,7 +105,7 @@ def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=
                 ax.set_ylabel('DiffEvo')
 
         arg['limit_val'] = obj.limit_val
-        record[name] = prepare_data(obj, trace, x0_trace, arg, fitnesses, x0_fitness)
+        record[obj.foo_name] = prepare_data(obj, trace, x0_trace, arg, fitnesses, x0_fitness)
     
     return record
 
