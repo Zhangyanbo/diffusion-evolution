@@ -23,7 +23,7 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, n_hidden_layers=1):
     observations = []
 
     for i in range(200):
-        action = controller(torch.from_numpy(observation).float())
+        action = controller(torch.from_numpy(observation).float()).numpy()
         observation, reward, terminated, truncated, info = env.step(action)
         observations.append(observation)
 

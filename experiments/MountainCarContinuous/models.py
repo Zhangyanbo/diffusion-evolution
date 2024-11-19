@@ -60,4 +60,4 @@ class ContinuousController:
     
     def __call__(self, x):
         with torch.no_grad():
-            return torch.tanh(self.model(x)).squeeze(0) * self.factor
+            return torch.tanh(self.model(x)) * self.factor

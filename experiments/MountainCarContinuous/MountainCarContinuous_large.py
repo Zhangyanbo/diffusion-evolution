@@ -5,7 +5,7 @@ from diffevo import LatentBayesianGenerator, RandomProjection, DDIMSchedulerCosi
 from tqdm import tqdm
 import os
 
-from experiments.MountainCarContinuous.MountainCarContinuous_latent import compute_rewards_list
+from MountainCarContinuous_latent import compute_rewards_list
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
@@ -71,7 +71,7 @@ if __name__ == '__main__':
         x, reward_history, population, x0_population, observations, random_map = experiment(
             10, 
             population_size=256, 
-            T=10, 
+            T=1, 
             scaling=100, 
             noise=1)
         

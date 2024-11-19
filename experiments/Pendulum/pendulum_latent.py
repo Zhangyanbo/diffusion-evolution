@@ -16,7 +16,7 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, n_hidden_layers=1):
     env = gym.make("Pendulum-v1", render_mode='rgb_array')
 
     model = ControllerMLP.from_parameter(dim_in, dim_out, dim_hidden, param, n_hidden_layers=n_hidden_layers)
-    controller = ContinuousController(model, env.action_space)
+    controller = ContinuousController(model, env.action_space, factor=2)
 
     observation, info = env.reset(seed=42)
     total_reward = 0
@@ -106,7 +106,7 @@ def make_video(para):
     env = gym.wrappers.RecordVideo(env=env, video_folder="./figures/", name_prefix="test-video", episode_trigger=lambda x: x % 2 == 0)
 
     model = ControllerMLP.from_parameter(3, 1, 8, para)
-    controller = ContinuousController(model, env.action_space)
+    controller = ContinuousController(model, env.action_space, factor=2)
 
     observation, info = env.reset(seed=42)
     rewards = []

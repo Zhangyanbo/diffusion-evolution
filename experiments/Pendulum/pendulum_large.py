@@ -5,7 +5,7 @@ from diffevo import LatentBayesianGenerator, RandomProjection, DDIMSchedulerCosi
 from tqdm import tqdm
 import os
 
-from experiments.Pendulum.pendulum_latent import compute_rewards_list
+from pendulum_latent import compute_rewards_list
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
