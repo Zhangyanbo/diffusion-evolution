@@ -1,4 +1,4 @@
-from models import ControllerMLP, DiscreteController
+from models import ControllerMLP, DiscreteController, ContinuousController
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,13 +16,13 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, n_hidden_layers=1):
     env = gym.make("MountainCarContinuous-v0", render_mode='rgb_array')
 
     model = ControllerMLP.from_parameter(dim_in, dim_out, dim_hidden, param, n_hidden_layers=n_hidden_layers)
-    controller = DiscreteController(model, env.action_space)
+    controller = ContinuousController(model, env.action_space)
 
     observation, info = env.reset(seed=42)
     total_reward = 0
     observations = []
 
-    for i in range(500):
+    for i in range(200):
         action = controller(torch.from_numpy(observation).float())
         observation, reward, terminated, truncated, info = env.step([action])
         observations.append(observation)
@@ -106,7 +106,7 @@ def make_video(para):
     env = gym.wrappers.RecordVideo(env=env, video_folder="./figures/", name_prefix="test-video", episode_trigger=lambda x: x % 2 == 0)
 
     model = ControllerMLP.from_parameter(2, 1, 8, para)
-    controller = DiscreteController(model, env.action_space)
+    controller = ContinuousController(model, env.action_space)
 
     observation, info = env.reset(seed=42)
     rewards = []
@@ -144,7 +144,7 @@ if __name__ == '__main__':
         x, reward_history, population, x0_population, observations, random_map = experiment(
             num_step=10, 
             population_size=256, 
-            T=10, 
+            T=1, 
             scaling=100, 
             noise=1)
         
