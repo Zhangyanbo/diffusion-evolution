@@ -51,3 +51,12 @@ class DiscreteController:
         with torch.no_grad():
             logits = self.model(x)
             return torch.argmax(logits).item()
+class ContinuousController:
+    def __init__(self, model, action_space, factor=1):
+        self.model = model
+        self.action_space = action_space
+        self.factor = factor
+    
+    def __call__(self, x):
+        with torch.no_grad():
+            return torch.tanh(self.model(x)).squeeze(0) * self.factor

@@ -5,7 +5,7 @@ from tqdm import tqdm
 from es import CMAES
 import os
 
-from acrobat_latent import compute_rewards_list
+from experiments.Acrobot.acrobot_latent import compute_rewards_list
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'

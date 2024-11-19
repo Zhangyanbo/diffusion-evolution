@@ -13,7 +13,7 @@ matplotlib.rcParams['font.family'] = 'STIXGeneral'
 
 
 def experiment(num_step, T=1, population_size=256, scaling=100, weight_decay=0, sigma_init=1, **args):
-    es = CMAES(num_params=41, popsize=population_size, weight_decay=weight_decay, sigma_init=sigma_init, inopts={'seed': np.nan, 'CMA_elitist': 2})
+    es = CMAES(num_params=51, popsize=population_size, weight_decay=weight_decay, sigma_init=sigma_init, inopts={'seed': np.nan, 'CMA_elitist': 2})
 
     population = []
     reward_history = []

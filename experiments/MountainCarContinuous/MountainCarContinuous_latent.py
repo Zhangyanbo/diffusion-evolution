@@ -1,4 +1,4 @@
-from models import ControllerMLP, DiscreteController, ContinuousController
+from models import ControllerMLP, ContinuousController
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,7 +24,7 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, n_hidden_layers=1):
 
     for i in range(200):
         action = controller(torch.from_numpy(observation).float())
-        observation, reward, terminated, truncated, info = env.step([action])
+        observation, reward, terminated, truncated, info = env.step(action)
         observations.append(observation)
 
         total_reward += reward
@@ -117,7 +117,7 @@ def make_video(para):
 
     for i in range(500):
         action = controller(torch.from_numpy(observation).float())
-        observation, reward, terminated, truncated, info = env.step([action])
+        observation, reward, terminated, truncated, info = env.step(action)
         rewards.append(reward)
 
         if len(info) > 0:

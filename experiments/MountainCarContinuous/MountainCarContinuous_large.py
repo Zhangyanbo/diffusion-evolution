@@ -15,14 +15,14 @@ matplotlib.rcParams['font.family'] = 'STIXGeneral'
 def experiment(num_step, T=1, population_size=512, scaling=0.1, noise=1, weight_decay=0):
     scheduler = DDIMSchedulerCosine(num_step=num_step)
 
-    x = torch.randn(population_size, 17410)
+    x = torch.randn(population_size, 17025)
 
     reward_history = []
     population = [x * scaling]
     x0_population = [x * scaling]
     observations = []
 
-    random_map = RandomProjection(17410, 2, normalize=True)
+    random_map = RandomProjection(17025, 2, normalize=True)
 
     for t, alpha in tqdm(scheduler, total=scheduler.num_step-1):
         rewards, obs = compute_rewards_list(2, 1, 128, x * scaling, n_hidden_layers=2)

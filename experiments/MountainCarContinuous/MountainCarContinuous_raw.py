@@ -2,14 +2,52 @@
 import torch
 import numpy as np
 from diffevo import DDIMScheduler, BayesianGenerator
-from tqdm import tqdm
-import os 
 
-from experiments.MountainCarContinuous.MountainCarContinuous_latent import compute_rewards_list
+from models import ControllerMLP, ContinuousController
+import matplotlib.pyplot as plt
+
+import gym
+from tqdm import tqdm
+import os
+
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
 matplotlib.rcParams['font.family'] = 'STIXGeneral'
+
+def compute_rewards(dim_in, dim_out, dim_hidden, param, n_hidden_layers=1):
+    env = gym.make("MountainCarContinuous-v0", render_mode='rgb_array')
+
+    model = ControllerMLP.from_parameter(dim_in, dim_out, dim_hidden, param, n_hidden_layers=n_hidden_layers)
+    controller = ContinuousController(model, env.action_space)
+
+    observation, info = env.reset(seed=42)
+    total_reward = 0
+    observations = []
+
+    for i in range(200):
+        action = controller(torch.from_numpy(observation).float())
+        observation, reward, terminated, truncated, info = env.step([action])
+        observations.append(observation)
+
+        total_reward += reward
+
+        if terminated or truncated:
+            observation, info = env.reset()
+            break
+
+    env.close()
+    return total_reward, torch.from_numpy(np.stack(observations)).float()
+
+def compute_rewards_list(dim_in, dim_out, dim_hidden, params, n_hidden_layers=1):
+    rewards = []
+    observations = []
+    for p in params:
+        reward, obs = compute_rewards(dim_in, dim_out, dim_hidden, p, n_hidden_layers=n_hidden_layers)
+        rewards.append(reward)
+        observations.append(obs)
+    return torch.Tensor(rewards), observations
+
 
 
 def experiment(num_step, T=1, population_size=512, scaling=0.1, noise=1, weight_decay=0):
@@ -35,7 +73,7 @@ def experiment(num_step, T=1, population_size=512, scaling=0.1, noise=1, weight_
         x0_population.append(x0 * scaling)
         observations.append(obs)
     
-    rewards, obs = compute_rewards_list(2, 3, 8, x * scaling)
+    rewards, obs = compute_rewards_list(2, 1, 8, x * scaling)
     reward_history.append(rewards)
     observations.append(obs)
 

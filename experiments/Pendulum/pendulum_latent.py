@@ -1,4 +1,4 @@
-from models import ControllerMLP, DiscreteController
+from models import ControllerMLP, ContinuousController
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,7 +16,7 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, n_hidden_layers=1):
     env = gym.make("Pendulum-v1", render_mode='rgb_array')
 
     model = ControllerMLP.from_parameter(dim_in, dim_out, dim_hidden, param, n_hidden_layers=n_hidden_layers)
-    controller = DiscreteController(model, env.action_space)
+    controller = ContinuousController(model, env.action_space)
 
     observation, info = env.reset(seed=42)
     total_reward = 0
@@ -56,7 +56,7 @@ def experiment(num_step, T=1, population_size=512, scaling=0.1, noise=1, weight_
     x0_population = [x * scaling]
     observations = []
 
-    random_map = RandomProjection(58, 2, normalize=True)
+    random_map = RandomProjection(41, 2, normalize=True)
 
     for t, alpha in tqdm(scheduler, total=scheduler.num_step-1):
         rewards, obs = compute_rewards_list(3, 1, 8, x * scaling)
@@ -106,7 +106,7 @@ def make_video(para):
     env = gym.wrappers.RecordVideo(env=env, video_folder="./figures/", name_prefix="test-video", episode_trigger=lambda x: x % 2 == 0)
 
     model = ControllerMLP.from_parameter(3, 1, 8, para)
-    controller = DiscreteController(model, env.action_space)
+    controller = ContinuousController(model, env.action_space)
 
     observation, info = env.reset(seed=42)
     rewards = []
@@ -133,7 +133,7 @@ def make_video(para):
 if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
-    os.makedirs("./data/raw", exist_ok=True)
+    os.makedirs("./data/latent", exist_ok=True)
     os.makedirs("./figures", exist_ok=True)
 
     num_experiment = 10

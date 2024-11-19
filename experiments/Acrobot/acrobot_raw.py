@@ -5,7 +5,7 @@ from diffevo import DDIMScheduler, BayesianGenerator
 from tqdm import tqdm
 import os 
 
-from acrobat_latent import compute_rewards_list
+from acrobot_latent import compute_rewards_list
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'

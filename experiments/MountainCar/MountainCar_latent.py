@@ -144,7 +144,7 @@ if __name__ == '__main__':
         x, reward_history, population, x0_population, observations, random_map = experiment(
             num_step=10, 
             population_size=256, 
-            T=10, 
+            T=1, 
             scaling=100, 
             noise=1)
         
