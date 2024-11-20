@@ -6,13 +6,13 @@ import os
 import argparse
 
 
-def save_experiment_data(folder, population, x0_population, observations, random_map, reward_history, all_reward_history, controller_params):
-    all_reward_history.append(reward_history)
+def save_experiment_data(folder, population, x0_population, observations, random_map, reward_history, controller_params):
 
     # Save experiment data
-    torch.save(population, f"{folder}/population.pt")
-    torch.save(x0_population, f"{folder}/x0_population.pt")
-    torch.save(observations, f"{folder}/observations.pt")
+    torch.save(population[-1].clone(), f"{folder}/population.pt") # only save the last step
+    if x0_population is not None:
+        torch.save(x0_population[-1].clone(), f"{folder}/x0_population.pt")
+    torch.save(observations, f"{folder}/observations.pt") # [num_step, population_size, (t_last, dim_in)]
     if random_map is not None:
         torch.save(random_map.state_dict(), f"{folder}/random_map.pt")
 
@@ -35,9 +35,6 @@ def save_experiment_data(folder, population, x0_population, observations, random
         n_hidden_layers=controller_params["n_hidden_layers"],
         factor=controller_params["factor"]
     )
-
-    # Save all reward histories
-    torch.save(all_reward_history, f"{folder}/reward_history.pt")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RL experiment runner')
@@ -106,6 +103,6 @@ if __name__ == '__main__':
         
         all_reward_history.append(reward_history)
         if i == 0:
-            save_experiment_data(folder, population, x0_population, observations, random_map, reward_history, all_reward_history, controller_params)
+            save_experiment_data(folder, population, x0_population, observations, random_map, reward_history, controller_params)
     # save the data
     torch.save(all_reward_history, f"{folder}/reward_history.pt")

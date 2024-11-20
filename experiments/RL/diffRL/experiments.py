@@ -33,7 +33,8 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, env_name, n_hidden_layer
             break
 
     env.close()
-    return total_reward, torch.from_numpy(np.stack(observations)).float()
+    observations = torch.from_numpy(np.stack(observations)).float()
+    return total_reward, observations
 
 def compute_rewards_list(dim_in, dim_out, dim_hidden, params, env_name, n_hidden_layers=1, controller_type="discrete", factor=1):
     rewards = []
