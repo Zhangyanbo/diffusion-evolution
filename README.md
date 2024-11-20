@@ -26,7 +26,7 @@ pip install .
 
 Some benchmark codes requires dependencies, can be installed via:
 ```bash
-pip install cma gym
+pip install cma gym pygame tqdm matplotlib numpy==1.26.4 
 ```
 
 Also Pytorch version 2.5 or above is required
