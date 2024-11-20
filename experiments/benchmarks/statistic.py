@@ -1,10 +1,5 @@
 import matplotlib.pyplot as plt
-from cmaes import CMAES_benchmark
-from diff_evo import DiffEvo_benchmark
-from pepg import PEPG_benchmark
-from openes import OpenES_benchmark
-from map_elite import MAPElite_benchmark
-from diff_evo_latent import LatentDiffEvo_benchmark
+from methods import *
 import torch
 import os
 import numpy as np
@@ -139,7 +134,7 @@ def get_all_records(num_experiments):
 if __name__ == '__main__':
     num_experiments = 10#100
     top_k = 64
-    cache = True
+    cache = False
 
     # set random seed
     random.seed(42)

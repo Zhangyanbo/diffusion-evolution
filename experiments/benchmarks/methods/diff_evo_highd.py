@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import torch
 from tqdm import tqdm
 from diffevo import DDIMScheduler, BayesianGenerator, DDIMSchedulerCosine, DDPMScheduler, RandomProjection, LatentBayesianGenerator
-from benchmarks import plot_background, get_obj
-from color_plate import *
+from .benchmarks import plot_background, get_obj
+from .color_plate import *
 
 
 def energy_prob_mapping(fitness, temperature):

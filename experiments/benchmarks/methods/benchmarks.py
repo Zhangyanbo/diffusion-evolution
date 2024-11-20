@@ -16,7 +16,7 @@ Main functions used in the benchmarks:
 import matplotlib.pyplot as plt
 from foobench import Objective
 import torch
-from color_plate import *
+from .color_plate import *
 
 
 # set fitness target and distance scale to unify the scale and slope of the fitness

@@ -1,9 +1,5 @@
 import matplotlib.pyplot as plt
-from cmaes import CMAES_benchmark
-from diff_evo import DiffEvo_benchmark
-from pepg import PEPG_benchmark
-from openes import OpenES_benchmark
-from map_elite import MAPElite_benchmark
+from methods import *
 import torch
 import numpy as np
 import random
@@ -12,7 +8,7 @@ objs = ["rosenbrock", "beale", "himmelblau", "ackley", "rastrigin"]
 
 if __name__ == '__main__':
     # set random seed for reproducibility
-    seed = 10
+    seed = 1
     torch.manual_seed(seed)
     np.random.seed(seed)
     random.seed(seed)
@@ -20,24 +16,21 @@ if __name__ == '__main__':
     num_benchmark = 4
     plt.figure(figsize=(12, 1 + num_benchmark * 2))
 
+    temperature = 0.1
     # DiffEvo
-    record = DiffEvo_benchmark(objs, num_steps=25, row=0, total_row=num_benchmark, plot=True, num_pop=512)
+    record = DiffEvo_benchmark(objs, num_steps=25, row=0, total_row=num_benchmark, plot=True, num_pop=512, temperature=temperature)
     torch.save(record, './data/diff_evo.pt')
 
     # CMAES
-    record = CMAES_benchmark(objs, num_steps=25, row=1, total_row=num_benchmark, limit_val=100, plot=True)
+    record = CMAES_benchmark(objs, num_steps=25, row=1, total_row=num_benchmark, limit_val=100, plot=True, temperature=temperature)
     torch.save(record, './data/cmaes.pt')
 
     # OpenES
-    record = OpenES_benchmark(objs, num_steps=1000, row=2, total_row=num_benchmark, plot=True)
+    record = OpenES_benchmark(objs, num_steps=1000, row=2, total_row=num_benchmark, plot=True, temperature=temperature)
     torch.save(record, './data/openes.pt')
 
-    # PEPG
-    # record = PEPG_benchmark(objs, num_steps=25, row=3, total_row=num_benchmark, plot=True)
-    # torch.save(record, './data/pepg.pt')
-
     # MAPElite
-    record = MAPElite_benchmark(objs, num_steps=25, row=3, total_row=num_benchmark, plot=True)
+    record = MAPElite_benchmark(objs, num_steps=25, row=3, total_row=num_benchmark, plot=True, temperature=temperature)
     torch.save(record, './data/map_elite.pt')
 
     # save the plot

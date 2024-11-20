@@ -1,8 +1,8 @@
-from benchmarks import plot_background, get_obj
+from .benchmarks import plot_background, get_obj
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
-from color_plate import *
+from .color_plate import *
 
 
 class OpenES:

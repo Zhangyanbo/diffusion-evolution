@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
 import torch
 from tqdm import tqdm
-from diffevo import DDIMScheduler, BayesianGenerator, DDIMSchedulerCosine, DDPMScheduler, RandomProjection, LatentBayesianGenerator
-from benchmarks import plot_background, get_obj
-from foobench import Objective
-from color_plate import *
+from diffevo import DDIMScheduler, BayesianGenerator, DDIMSchedulerCosine, DDPMScheduler
+from .benchmarks import plot_background, get_obj
+from .color_plate import *
 
 
 
@@ -13,7 +12,6 @@ def experiment(obj, num_pop=256, num_step=100, scaling=4.0, temperatures=None, d
     scheduler = DDIMSchedulerCosine(num_step=num_step)
 
     x = torch.randn(num_pop, dim)
-    random_map = RandomProjection(dim, 2, normalize=True)
 
     trace = []
     x0_trace = []
@@ -23,7 +21,7 @@ def experiment(obj, num_pop=256, num_step=100, scaling=4.0, temperatures=None, d
     for t, alpha in tqdm(scheduler, total=num_step-1, disable=disable_bar):
         fitness = obj(x * scaling)
         fitnesses.append(fitness)
-        generator = LatentBayesianGenerator(x, random_map(x).detach(), fitness, alpha, density='uniform')
+        generator = BayesianGenerator(x, fitness, alpha, density='uniform')
         x, x0 = generator(noise=0.1, return_x0=True)
         x0_fit = obj(x0 * scaling)
         x0_fitness.append(x0_fit)
@@ -63,7 +61,7 @@ def prepare_data(obj, trace, x0_trace, arg, fitnesses, x0_fitness):
     }
     return info
 
-def LatentDiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=256, scaling=4.0, plot=False, disable_bar=False, dim=2, **kwargs):
+def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=256, scaling=4.0, plot=False, disable_bar=False, dim=2, **kwargs):
     arg = {
         "limit_val": 100,
         "num_pop": num_pop,
@@ -77,13 +75,6 @@ def LatentDiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, nu
 
     for i, name in enumerate(objs):
         obj, obj_rescaled = get_obj(name, **kwargs)
-        # if name has _4d, _32d, _256d, set dim to 4, 32, 256
-        if '_4d' in name:
-            dim = 4
-        elif '_32d' in name:
-            dim = 32
-        elif '_256d' in name:
-            dim = 256
         pop, trace, x0_trace, fitnesses, x0_fitness = experiment(
             obj_rescaled, 
             num_pop=num_pop, 
@@ -112,9 +103,9 @@ if __name__ == '__main__':
     obj_names = ["rosenbrock", "beale", "himmelblau", "ackley", "rastrigin"]
     
     plt.figure(figsize=(12, 3))
-    record = LatentDiffEvo_benchmark(obj_names, num_steps=100, row=0, total_row=1, num_pop=512, scaling=4, plot=True)
-    torch.save(record, './data/latent_diff_evo.pt')
+    record = DiffEvo_benchmark(obj_names, num_steps=100, row=0, total_row=1, num_pop=512, scaling=4, plot=True)
+    torch.save(record, './data/diff_evo.pt')
 
     plt.tight_layout()
-    plt.savefig('./images/latent_diff_evo.png')
+    plt.savefig('./images/diff_evo.png')
     plt.close()

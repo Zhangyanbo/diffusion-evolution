@@ -1,9 +1,9 @@
-from benchmarks import plot_background, get_obj
+from .benchmarks import plot_background, get_obj
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
 from copy import deepcopy
-from color_plate import *
+from .color_plate import *
 
 
 def MapEliteExperiment(obj, init_num_pop=100, num_iter=256, sigma_mut=0.1, sigma_init=1, grid_size=10):

@@ -1,11 +1,11 @@
-from benchmarks import plot_background, get_obj
-from es import PEPG
+from .benchmarks import plot_background, get_obj
+from .es import PEPG
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
 from copy import deepcopy
 from matplotlib.patches import Ellipse
-from color_plate import *
+from .color_plate import *
 
 # https://www.sciencedirect.com/science/article/pii/S0893608009003220
 

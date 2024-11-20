@@ -1,10 +1,10 @@
-from es import CMAES
+from .es import CMAES
 from matplotlib.patches import Ellipse
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
-from benchmarks import plot_background, get_obj
-from color_plate import *
+from .benchmarks import plot_background, get_obj
+from .color_plate import *
 
 
 def CMAES_experiment(obj, num_steps=10, sigma_init=1):
