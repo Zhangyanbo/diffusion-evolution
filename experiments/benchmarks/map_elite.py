@@ -80,7 +80,7 @@ def MAPElite_benchmark(objs, num_steps, row=0, grid_size=1, sigma_mut=0.5, total
     record = dict()
 
     for i, foo_name in enumerate(objs):
-        obj, obj_rescaled = get_obj(foo_name)
+        obj, obj_rescaled = get_obj(foo_name, **kwargs)
 
         # es, traj, mus, sigmas, fitnesses = PEPG_experiment(obj_rescaled, num_steps=num_steps, sigma_init=sigma_init)
         populations, maps, fitnesses = MapEliteExperiment(obj_rescaled, 

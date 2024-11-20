@@ -79,7 +79,7 @@ def PEPG_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, sigma_init=
     record = dict()
 
     for i, foo_name in enumerate(objs):
-        obj, obj_rescaled = get_obj(foo_name)
+        obj, obj_rescaled = get_obj(foo_name, **kwargs)
 
         es, traj, mus, sigmas, fitnesses = PEPG_experiment(obj_rescaled, num_steps=num_steps, sigma_init=sigma_init)
         record[foo_name] = prepare_data(traj, arg, fitnesses)

@@ -76,7 +76,7 @@ def LatentDiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, nu
     record = dict()
 
     for i, name in enumerate(objs):
-        obj, obj_rescaled = get_obj(name)
+        obj, obj_rescaled = get_obj(name, **kwargs)
         # if name has _4d, _32d, _256d, set dim to 4, 32, 256
         if '_4d' in name:
             dim = 4

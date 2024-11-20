@@ -85,7 +85,7 @@ def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=
     record = dict()
 
     for i, name in enumerate(objs):
-        obj, obj_rescaled = get_obj(name, eps=eps, wrapper=wrapper, **kwargs)
+        obj, obj_rescaled = get_obj(name, **kwargs)
         pop, trace, x0_trace, fitnesses, x0_fitness = experiment(
             obj_rescaled, 
             num_pop=num_pop, 
