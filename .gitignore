@@ -12,6 +12,7 @@ __pycache__/
 # Experiments
 *.pdf
 *.pt
+*.mp4
 
 # Sketch
 sketch*.*
