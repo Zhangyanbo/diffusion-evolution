@@ -132,7 +132,7 @@ def get_all_records(num_experiments):
 
 
 if __name__ == '__main__':
-    num_experiments = 10#100
+    num_experiments = 100
     top_k = 64
     cache = False
 
