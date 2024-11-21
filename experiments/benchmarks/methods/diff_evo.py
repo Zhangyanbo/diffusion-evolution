@@ -51,17 +51,18 @@ def make_plot(obj, pop, ax=None, traj=None, x0_trace=None, num_trace=64, title=N
     plt.xlim(-4, 4)
     plt.ylim(-4, 4)
 
-def prepare_data(obj, trace, x0_trace, arg, fitnesses, x0_fitness):
+def prepare_data(obj, trace, x0_trace, arg, fitnesses, x0_fitness, benchmark_fitness=None):
     info = {
         "arguments": arg,
         "trace": trace,
         "x0_trace": x0_trace,
         "fitnesses": fitnesses,
-        "x0_fitness": x0_fitness
+        "x0_fitness": x0_fitness,
+        "benchmark_fitness": benchmark_fitness
     }
     return info
 
-def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=256, scaling=4.0, plot=False, disable_bar=False, dim=2, **kwargs):
+def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=256, scaling=4.0, plot=False, disable_bar=False, benchmark_temperature=1.0, dim=2, **kwargs):
     arg = {
         "limit_val": 100,
         "num_pop": num_pop,
@@ -83,6 +84,9 @@ def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=
             disable_bar=disable_bar,
             dim=dim
             )
+        
+        _, obj_benchmark = get_obj(name, temperature=benchmark_temperature)
+        benchmark_fitness = obj_benchmark(pop)
 
         if plot:
             ax = plt.subplot(total_row, total_col, i + 1 + shift)
@@ -92,7 +96,7 @@ def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=
                 ax.set_ylabel('DiffEvo')
 
         arg['limit_val'] = obj.limit_val
-        record[name] = prepare_data(obj, trace, x0_trace, arg, fitnesses, x0_fitness)
+        record[name] = prepare_data(obj, trace, x0_trace, arg, fitnesses, x0_fitness, benchmark_fitness)
     
     return record
 
