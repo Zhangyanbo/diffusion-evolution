@@ -13,6 +13,7 @@ __pycache__/
 *.pdf
 *.pt
 *.mp4
+*.json
 
 # Sketch
 sketch*.*
