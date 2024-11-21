@@ -7,9 +7,12 @@ from .color_plate import *
 
 
 
-def experiment(obj, num_pop=256, num_step=100, scaling=4.0, temperatures=None, disable_bar=False, dim=2):
+def experiment(obj, num_pop=256, num_step=100, scaling=4.0, temperatures=None, disable_bar=False, dim=2, scheduler=None):
     
-    scheduler = DDIMSchedulerCosine(num_step=num_step)
+    if scheduler is None:
+        scheduler = DDIMSchedulerCosine(num_step=num_step)
+    else:
+        scheduler = scheduler(num_step=num_step)
 
     x = torch.randn(num_pop, dim)
 
@@ -62,7 +65,7 @@ def prepare_data(obj, trace, x0_trace, arg, fitnesses, x0_fitness, benchmark_fit
     }
     return info
 
-def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=256, scaling=4.0, plot=False, disable_bar=False, benchmark_temperature=1.0, dim=2, **kwargs):
+def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=256, scaling=4.0, plot=False, disable_bar=False, benchmark_temperature=1.0, dim=2, scheduler=None, **kwargs):
     arg = {
         "limit_val": 100,
         "num_pop": num_pop,
@@ -82,7 +85,8 @@ def DiffEvo_benchmark(objs, num_steps, row=0, total_row=4, total_col=5, num_pop=
             num_step=num_steps, 
             scaling=scaling, 
             disable_bar=disable_bar,
-            dim=dim
+            dim=dim,
+            scheduler=scheduler
             )
         
         _, obj_benchmark = get_obj(name, temperature=benchmark_temperature)
