@@ -9,13 +9,14 @@ name_table = {
     'DDIMScheduler': 'Linear',
 }
 
-def get_avg_fitness(record, idx_exp, idx_step, top_n=1e9):
-    # Extract fitness values for rastrigin benchmark
-    fitnesses = record['records'][idx_exp][idx_step]['rastrigin']['fitnesses'][-1]
-    num_steps = record['records'][idx_exp][idx_step]['rastrigin']['arguments']['num_step']
-    
-    # Calculate mean of top-n fitnesses
-    return fitnesses[:int(min(len(fitnesses), top_n))].mean(), num_steps
+def get_avg_fitness(record, idx_experiment, idx_step, top_n=1e9):
+    data = record['records'][idx_experiment][idx_step]['rastrigin']
+    num_steps = data['arguments']['num_step']
+    all_fitnesses = data['fitnesses'][-1]
+    all_fitnesses = all_fitnesses.sort().values
+    top_n = min(top_n, len(all_fitnesses))
+    top_n_fitnesses = all_fitnesses[-top_n:]
+    return top_n_fitnesses.mean().item(), num_steps
 
 def get_step_fitness(record, top_n=1e9):
     total_step_fitness = []
