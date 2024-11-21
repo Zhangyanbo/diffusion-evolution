@@ -68,6 +68,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    # print the arguments
+    for arg in vars(args):
+        print(f"{arg}: {getattr(args, arg)}")
+
     torch.manual_seed(42)
     np.random.seed(42)
     all_reward_history = []
