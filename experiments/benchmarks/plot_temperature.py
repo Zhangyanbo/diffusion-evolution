@@ -108,6 +108,7 @@ def plot_boxplots(temperature_data):
 
     plt.tight_layout()
     plt.savefig('./figures/temperature_boxplot.png', dpi=300)
+    plt.savefig('./figures/temperature_boxplot.pdf')
     plt.close()
 
 def plot_qd_scores(records):
@@ -144,6 +145,7 @@ def plot_qd_scores(records):
     plt.legend()
     plt.semilogx()
     plt.savefig('./figures/temperature_qd_scores.png', dpi=300)
+    plt.savefig('./figures/temperature_qd_scores.pdf')
     plt.close()
 
 def plot_entropy(records):
@@ -174,6 +176,7 @@ def plot_entropy(records):
     plt.ylabel('Entropy')
     plt.semilogx()
     plt.savefig('./figures/temperature_entropy.png', dpi=300)
+    plt.savefig('./figures/temperature_entropy.pdf')
     plt.close()
 
 def main():

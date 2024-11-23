@@ -73,6 +73,7 @@ def main():
     # Save and show plot
     os.makedirs('./figures', exist_ok=True)
     plt.savefig('./figures/alpha.png', dpi=300)
+    plt.savefig('./figures/alpha.pdf')
 
 if __name__ == "__main__":
     main()
