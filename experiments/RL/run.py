@@ -75,6 +75,7 @@ if __name__ == '__main__':
     torch.manual_seed(42)
     np.random.seed(42)
     all_reward_history = []
+    all_endings = []
 
     controller_params = {
         "dim_in": args.dim_in,
@@ -95,7 +96,7 @@ if __name__ == '__main__':
     os.makedirs(folder, exist_ok=True)
 
     for i in range(args.num_experiment):
-        x, reward_history, population, x0_population, observations, random_map = experiment_func(
+        x, reward_history, population, x0_population, observations, random_map, endings = experiment_func(
             num_step=10, 
             population_size=256, 
             T=args.T, 
@@ -106,7 +107,9 @@ if __name__ == '__main__':
         )
         
         all_reward_history.append(reward_history)
+        all_endings.append(endings)
         if i == 0:
             save_experiment_data(folder, population, x0_population, observations, random_map, reward_history, controller_params)
     # save the data
     torch.save(all_reward_history, f"{folder}/reward_history.pt")
+    torch.save(all_endings, f"{folder}/endings.pt")

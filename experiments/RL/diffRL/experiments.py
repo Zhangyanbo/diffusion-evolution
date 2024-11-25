@@ -20,6 +20,7 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, env_name, n_hidden_layer
     observation, info = env.reset(seed=42)
     total_reward = 0
     observations = []
+    ending = {'terminated': False, 'truncated': False}
 
     for i in range(500):
         action = controller(torch.from_numpy(observation).float())
@@ -29,21 +30,25 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, env_name, n_hidden_layer
         total_reward += reward
 
         if terminated or truncated:
+            ending['terminated'] = terminated
+            ending['truncated'] = truncated
             observation, info = env.reset()
             break
 
     env.close()
     observations = torch.from_numpy(np.stack(observations)).float()
-    return total_reward, observations
+    return total_reward, observations, ending
 
 def compute_rewards_list(dim_in, dim_out, dim_hidden, params, env_name, n_hidden_layers=1, controller_type="discrete", factor=1):
     rewards = []
     observations = []
+    endings = []
     for p in params:
-        reward, obs = compute_rewards(dim_in, dim_out, dim_hidden, p, env_name, n_hidden_layers=n_hidden_layers, controller_type=controller_type, factor=factor)
+        reward, obs, ending = compute_rewards(dim_in, dim_out, dim_hidden, p, env_name, n_hidden_layers=n_hidden_layers, controller_type=controller_type, factor=factor)
         rewards.append(reward)
         observations.append(obs)
-    return torch.Tensor(rewards), observations
+        endings.append(ending)
+    return torch.Tensor(rewards), observations, endings
 
 def calculate_dim(dim_in, dim_out, dim_hidden, n_hidden_layers):
     # calculate the total dimension of the controller
@@ -64,7 +69,7 @@ def experiment(num_step, T=1, population_size=512, latent_dim=None, scaling=0.1,
         random_map = RandomProjection(dim, latent_dim, normalize=True)
 
     for t, alpha in tqdm(scheduler, total=scheduler.num_step-1):
-        rewards, obs = compute_rewards_list(dim_in, dim_out, dim_hidden, x * scaling, env_name, n_hidden_layers=n_hidden_layers, controller_type=controller_type, factor=factor)
+        rewards, obs, endings = compute_rewards_list(dim_in, dim_out, dim_hidden, x * scaling, env_name, n_hidden_layers=n_hidden_layers, controller_type=controller_type, factor=factor)
         l2 = torch.norm(population_history[-1], dim=-1) ** 2
         fitness = torch.exp((rewards - rewards.max()) / T - l2 * weight_decay)
 
@@ -80,7 +85,7 @@ def experiment(num_step, T=1, population_size=512, latent_dim=None, scaling=0.1,
         x0_population.append(x0 * scaling)
         observations.append(obs)
     
-    rewards, obs = compute_rewards_list(dim_in, dim_out, dim_hidden, x * scaling, env_name, n_hidden_layers=n_hidden_layers, controller_type=controller_type, factor=factor)
+    rewards, obs, endings = compute_rewards_list(dim_in, dim_out, dim_hidden, x * scaling, env_name, n_hidden_layers=n_hidden_layers, controller_type=controller_type, factor=factor)
     reward_history.append(rewards)
     observations.append(obs)
 
@@ -89,9 +94,9 @@ def experiment(num_step, T=1, population_size=512, latent_dim=None, scaling=0.1,
     x0_population = torch.stack(x0_population)
 
     if latent_dim is not None:
-        return x, reward_history, population_history, x0_population, observations, random_map
+        return x, reward_history, population_history, x0_population, observations, random_map, endings
     else:
-        return x, reward_history, population_history, x0_population, observations, None
+        return x, reward_history, population_history, x0_population, observations, None, endings
 
 def experiment_cmaes(num_step, T=1, population_size=512, latent_dim=None, scaling=0.1, noise=1, sigma_init=1, dim_in=4, dim_out=2, dim_hidden=8, n_hidden_layers=1, weight_decay=0, env_name="CartPole-v1", controller_type="discrete", factor=1):
     dim = calculate_dim(dim_in, dim_out, dim_hidden, n_hidden_layers)
@@ -105,7 +110,7 @@ def experiment_cmaes(num_step, T=1, population_size=512, latent_dim=None, scalin
         x = es.ask()
         population_history.append(x * scaling)
 
-        rewards, obs = compute_rewards_list(dim_in, dim_out, dim_hidden, x * scaling, env_name, n_hidden_layers=n_hidden_layers, controller_type=controller_type, factor=factor)
+        rewards, obs, endings = compute_rewards_list(dim_in, dim_out, dim_hidden, x * scaling, env_name, n_hidden_layers=n_hidden_layers, controller_type=controller_type, factor=factor)
         fitness = rewards
 
         es.tell(fitness)
@@ -115,4 +120,4 @@ def experiment_cmaes(num_step, T=1, population_size=512, latent_dim=None, scalin
     population_history = torch.from_numpy(np.stack(population_history)).float()
     reward_history = torch.stack(reward_history)
 
-    return x, reward_history, population_history, None, observations, None
+    return x, reward_history, population_history, None, observations, None, endings
