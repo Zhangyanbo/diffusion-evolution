@@ -11,6 +11,10 @@ name_table = {
 
 colors = ['#6F6E6E', '#F5851E', '#343434']
 
+import matplotlib
+matplotlib.rcParams['mathtext.fontset'] = 'stix'
+matplotlib.rcParams['font.family'] = 'STIXGeneral'
+
 def get_avg_fitness(record, idx_experiment, idx_step, top_n=1e9):
     data = record['records'][idx_experiment][idx_step]['rastrigin']
     num_steps = data['arguments']['num_step']
@@ -60,7 +64,8 @@ def main():
         all_records.append(records)
 
     # Create plot
-    plt.figure()
+    plt.figure(figsize=(8, 3))
+    plt.subplot(1, 2, 2)
     for idx_scheduler in range(len(all_records)):
         total_step_fitness, x, scheduler = get_step_fitness(all_records[idx_scheduler], top_n=64)
         total_step_fitness_std, x_std, scheduler_std = get_step_fitness_std(all_records[idx_scheduler])
@@ -87,11 +92,29 @@ def main():
     plt.legend(loc='lower right')
     plt.xlabel('Number of total steps')
     plt.ylabel('Average fitness (top 64 elites)')
+    plt.title(r'(b) compare performance')
+    # Demostrate different alphas
+    plt.subplot(1, 2, 1)
+    T = 100
+    t = torch.linspace(0, T, T)
+    alpha_linear = 1 - t / T
+    alpha_cosine = torch.cos(t * np.pi / T) / 2 + 0.5
+    beta0 = 0.0003
+    gamma = 0.069
+    alpha_ddpm = torch.exp(-beta0 * t - gamma * (t ** 2) / T)
+    plt.plot(t, alpha_linear, label='Linear', color=colors[0])
+    plt.plot(t, alpha_cosine, label='Cosine', color=colors[1])
+    plt.plot(t, alpha_ddpm, label='DDPM', color=colors[2])
+    plt.legend()
+    plt.xlabel('$t$')
+    plt.ylabel('$\\alpha$')
+    plt.title(r'(a) $\alpha$ schedule')
     
+    plt.tight_layout()
     # Save and show plot
     os.makedirs('./figures', exist_ok=True)
     plt.savefig('./figures/alpha.png', dpi=300)
-    plt.savefig('./figures/alpha.pdf')
+    plt.savefig('./figures/alpha.pdf', bbox_inches='tight')
 
 if __name__ == "__main__":
     main()
