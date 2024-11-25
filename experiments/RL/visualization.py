@@ -82,6 +82,7 @@ def prepare_reward(rewards):
     return rewards
 
 def range_plot(x, color=None, label=None):
+    print(len(x), x[0].shape)
     x = prepare_reward(x)
     center = x.quantile(0.5, dim=-1)
     lower = x.quantile(0.25, dim=-1)
@@ -123,10 +124,11 @@ def reward_compare_plot(*rewards, labels=None, colors=None, ax=None):
 def latent_plot(z, ax, color=None, alpha=1, label=None, zorder=1):
     ax.scatter(z[:, 0], z[:, 1], zorder=zorder, marker='o', color=color, alpha=alpha, label=label, edgecolors='none')
 
-def compare_latent_plot(pop, pop_cmaes, random_map, pop_large, random_map_large, ax=None):
+def compare_latent_plot(pop, pop_raw, pop_cmaes, random_map, pop_large, random_map_large, ax=None):
     if ax is None:
         ax = plt.gca()
     latent_plot(random_map(pop).detach(), ax, color='#E93A01', label='latent diffusion evolution', alpha=0.5)
+    latent_plot(random_map(pop_raw).detach(), ax, color='#46B3D5', label='DiffEvo', alpha=0.25)
     latent_plot(random_map(pop_cmaes).detach(), ax, color='#6F6E6E', alpha=0.5, label='CMA-ES')
     latent_plot(random_map_large(pop_large).detach(), ax, color='#F5851E', alpha=0.25, label='latent DiffEvo (high-d)')
 
@@ -212,14 +214,14 @@ if __name__ == '__main__':
 
     # Bottom left plot
     ax2 = fig.add_subplot(gs[1, 0])
-    reward_compare_plot(rewards_latent, rewards_large, rewards_cmaes,
-                        labels=['latent DiffEvo', 'latent DiffEvo (high-d)', 'CMA-ES'],
-                        colors=['#E93A01', '#F5851E', '#6F6E6E'], ax=ax2)
+    reward_compare_plot(rewards_raw, rewards_latent, rewards_large, rewards_cmaes,
+                        labels=['DiffEvo', 'latent DiffEvo', 'latent DiffEvo (high-d)', 'CMA-ES'],
+                        colors=['#46B3D5', '#E93A01', '#F5851E', '#6F6E6E'], ax=ax2)
     ax2.set_title('(b) reward comparison')
 
     # Bottom middle plot
     ax3 = fig.add_subplot(gs[1, 1])
-    compare_latent_plot(pop_latent, pop_cmaes, random_map, pop_large, random_map_large, ax=ax3)
+    compare_latent_plot(pop_latent, pop_raw, pop_cmaes, random_map, pop_large, random_map_large, ax=ax3)
     ax3.set_title('(c) latent space comparison')
 
     # Bottom right plot
