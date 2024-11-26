@@ -92,7 +92,7 @@ if __name__ == '__main__':
     elif args.method == "cmaes":
         experiment_func = experiment_cmaes
 
-    folder = f'./results/{args.env_name}/{args.exp_name}'
+    folder = f'./results/{str(args.scaling)}/{args.env_name}/{args.exp_name}'
     os.makedirs(folder, exist_ok=True)
 
     for i in range(args.num_experiment):
