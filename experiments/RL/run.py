@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import argparse
+import json
 
 
 def save_experiment_data(folder, population, x0_population, observations, random_map, reward_history, controller_params):
@@ -77,6 +78,7 @@ if __name__ == '__main__':
     all_reward_history = []
     all_endings = []
 
+
     controller_params = {
         "dim_in": args.dim_in,
         "dim_out": args.dim_out,
@@ -113,3 +115,6 @@ if __name__ == '__main__':
     # save the data
     torch.save(all_reward_history, f"{folder}/reward_history.pt")
     torch.save(all_endings, f"{folder}/endings.pt")
+    # save all the arguments
+    with open(f"{folder}/args.json", "w") as f:
+        json.dump(vars(args), f, indent=4)
