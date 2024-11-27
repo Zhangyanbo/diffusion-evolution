@@ -82,7 +82,7 @@ def prepare_reward(rewards):
     return rewards
 
 def range_plot(x, color=None, label=None):
-    print(len(x), x[0].shape)
+    print(f'{len(x)} experiments, (num_generation, num_population)={x[0].shape}')
     x = prepare_reward(x)
     center = x.quantile(0.5, dim=-1)
     lower = x.quantile(0.25, dim=-1)
@@ -132,10 +132,16 @@ def compare_latent_plot(pop, pop_raw, pop_cmaes, random_map, pop_large, random_m
     latent_plot(random_map(pop_cmaes).detach(), ax, color='#6F6E6E', alpha=0.5, label='CMA-ES')
     latent_plot(random_map_large(pop_large).detach(), ax, color='#F5851E', alpha=0.25, label='latent DiffEvo (high-d)')
 
+    # calculate the range of the data
+    x = torch.cat([random_map(pop).detach(), random_map(pop_raw).detach(), random_map_large(pop_large).detach()], dim=0) # not include cmaes
+    x_mean = x.mean(dim=0)
+    x_std = x.std(dim=0)
+    n = 2.0
+
     ax.set_xlabel('$z_1$')
     ax.set_ylabel('$z_2$')
-    ax.set_xlim(-1.1, 1.1)
-    ax.set_ylim(-1.1, 1.1)
+    ax.set_xlim(x_mean[0]-n*x_std[0], x_mean[0]+n*x_std[0])
+    ax.set_ylim(x_mean[1]-n*x_std[1], x_mean[1]+n*x_std[1])
 
 def draw_cartpole_demo(ax):
     ax.axhline(y=0, color='gray', linestyle='--')
@@ -180,23 +186,24 @@ if __name__ == '__main__':
     np.random.seed(0)
     torch.manual_seed(0)
 
-    obs = torch.load('results/more_experiments/results_1.0/CartPole-v1/DiffEvoLatent/observations.pt') # [time, num_pop, [T, 4]]
+    path = './results/1.0/CartPole-v1'
+    obs = torch.load(f'{path}/DiffEvoLatent/observations.pt') # [time, num_pop, [T, 4]]
 
-    pop_latent = torch.load('results/more_experiments/results_1.0/CartPole-v1/DiffEvoLatent/population.pt')
-    rewards_latent = torch.load('results/more_experiments/results_1.0/CartPole-v1/DiffEvoLatent/reward_history.pt')
+    pop_latent = torch.load(f'{path}/DiffEvoLatent/population.pt')
+    rewards_latent = torch.load(f'{path}/DiffEvoLatent/reward_history.pt')
     random_map = RandomProjection(58, 2, normalize=True)
-    random_map.load_state_dict(torch.load('results/more_experiments/results_1.0/CartPole-v1/DiffEvoLatent/random_map.pt'))
+    random_map.load_state_dict(torch.load(f'{path}/DiffEvoLatent/random_map.pt'))
 
-    rewards_raw = torch.load('results/more_experiments/results_1.0/CartPole-v1/DiffEvoRaw/reward_history.pt')
-    pop_raw = torch.load('results/more_experiments/results_1.0/CartPole-v1/DiffEvoRaw/population.pt')
+    rewards_raw = torch.load(f'{path}/DiffEvoRaw/reward_history.pt')
+    pop_raw = torch.load(f'{path}/DiffEvoRaw/population.pt')
 
-    rewards_cmaes = torch.load('results/more_experiments/results_1.0/CartPole-v1/CMAES/reward_history.pt')
-    pop_cmaes = torch.load('results/more_experiments/results_1.0/CartPole-v1/CMAES/population.pt')
+    rewards_cmaes = torch.load(f'{path}/CMAES/reward_history.pt')
+    pop_cmaes = torch.load(f'{path}/CMAES/population.pt')
 
-    rewards_large = torch.load('results/more_experiments/results_1.0/CartPole-v1/DiffEvoLargeLatent/reward_history.pt')
-    pop_large = torch.load('results/more_experiments/results_1.0/CartPole-v1/DiffEvoLargeLatent/population.pt')
+    rewards_large = torch.load(f'{path}/DiffEvoLargeLatent/reward_history.pt')
+    pop_large = torch.load(f'{path}/DiffEvoLargeLatent/population.pt')
     random_map_large = RandomProjection(17410, 2, normalize=True)
-    random_map_large.load_state_dict(torch.load('results/more_experiments/results_1.0/CartPole-v1/DiffEvoLargeLatent/random_map.pt'))
+    random_map_large.load_state_dict(torch.load(f'{path}/DiffEvoLargeLatent/random_map.pt'))
 
     # generations = np.array([1, 40, 70, 90, 100])-1
     generations = np.array([2, 4, 6, 8, 10])-1
