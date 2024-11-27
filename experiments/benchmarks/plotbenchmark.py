@@ -16,7 +16,7 @@ if __name__ == '__main__':
     num_benchmark = 4
     plt.figure(figsize=(12, 1 + num_benchmark * 2))
 
-    temperature = 0.1
+    temperature = 0.5
     # DiffEvo
     record = DiffEvo_benchmark(objs, num_steps=25, row=0, total_row=num_benchmark, plot=True, num_pop=512, temperature=temperature)
     torch.save(record, './data/diff_evo.pt')
