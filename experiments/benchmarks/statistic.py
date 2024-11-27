@@ -150,6 +150,7 @@ if __name__ == '__main__':
     
     # save to ./data/fitness_top_<top_k>.csv
     fitness_table.to_csv(f'./data/fitness_top_{top_k}.csv')
+    fitness_std.to_csv(f'./data/fitness_std_top_{top_k}.csv')
 
     # merge two tables together, each cell is "entropy (fitness)"
     # use string to format
