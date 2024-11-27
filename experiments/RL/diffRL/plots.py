@@ -4,6 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from .models import ControllerMLP, DiscreteController, ContinuousController
+from .utils import normalize_observation
 
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
 matplotlib.rcParams['font.family'] = 'STIXGeneral'
@@ -38,7 +39,7 @@ def make_video(folder, para, controller_type="discrete", env_name="CartPole-v1",
     env.start_video_recorder()
 
     for i in range(500):
-        action = controller(torch.from_numpy(observation).float())
+        action = controller(torch.from_numpy(normalize_observation(observation, env.observation_space)).float())
         observation, reward, terminated, truncated, info = env.step(action)
         rewards.append(reward)
 

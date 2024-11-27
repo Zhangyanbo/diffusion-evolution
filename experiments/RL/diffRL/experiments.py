@@ -5,6 +5,7 @@ import gym
 from tqdm import tqdm
 from .es import CMAES
 from diffevo import LatentBayesianGenerator, RandomProjection, DDIMSchedulerCosine, BayesianGenerator
+from .utils import normalize_observation
 
 
 def compute_rewards(dim_in, dim_out, dim_hidden, param, env_name, n_hidden_layers=1, controller_type="discrete", factor=1):
@@ -20,13 +21,12 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, env_name, n_hidden_layer
     elif controller_type == "continuous":
         controller = ContinuousController(model, env.action_space, factor=factor)
 
-    observation, info = env.reset()
     total_reward = 0
     observations = []
     ending = {'terminated': False, 'truncated': False}
 
     for i in range(500):
-        action = controller(torch.from_numpy(observation).float())
+        action = controller(torch.from_numpy(normalize_observation(observation, env.observation_space)).float())
         observation, reward, terminated, truncated, info = env.step(action)
         observations.append(observation)
 
@@ -35,7 +35,6 @@ def compute_rewards(dim_in, dim_out, dim_hidden, param, env_name, n_hidden_layer
         if terminated or truncated:
             ending['terminated'] = terminated
             ending['truncated'] = truncated
-            observation, info = env.reset()
             break
 
     env.close()
@@ -58,6 +57,9 @@ def calculate_dim(dim_in, dim_out, dim_hidden, n_hidden_layers):
     return (dim_in + 1) * dim_hidden + (dim_hidden + 1) * dim_hidden * (n_hidden_layers-1) + (dim_hidden + 1) * dim_out
 
 def experiment(num_step, T=1, population_size=512, latent_dim=None, scaling=0.1, noise=1, dim_in=4, dim_out=2, dim_hidden=8, n_hidden_layers=1, weight_decay=0, env_name="CartPole-v1", controller_type="discrete", factor=1):
+
+    # print all arguments
+    print(f"num_step: {num_step}, T: {T}, population_size: {population_size}, latent_dim: {latent_dim}, scaling: {scaling}, noise: {noise}, dim_in: {dim_in}, dim_out: {dim_out}, dim_hidden: {dim_hidden}, n_hidden_layers: {n_hidden_layers}, weight_decay: {weight_decay}, env_name: {env_name}, controller_type: {controller_type}, factor: {factor}")
 
     scheduler = DDIMSchedulerCosine(num_step=num_step)
 
