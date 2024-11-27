@@ -161,11 +161,11 @@ def plot_qd_scores(records, ax=None, savefig=True, legend=True):
         
         ax.plot(temps, scores, '.-', label=name_display[exp_name],
                 color=colors[experiment_names.index(exp_name)])
-        # plt.fill_between(temps, 
-        #                 [s - std for s, std in zip(scores, std_scores)],
-        #                 [s + std for s, std in zip(scores, std_scores)],
-        #                 color=colors[experiment_names.index(exp_name)],
-        #                 alpha=0.2)
+        ax.fill_between(temps, 
+                        [s - std for s, std in zip(scores, std_scores)],
+                        [s + std for s, std in zip(scores, std_scores)],
+                        color=colors[experiment_names.index(exp_name)],
+                        alpha=0.2)
 
     ax.set_xlabel('Temperature')
     ax.set_ylabel('(c) QD-Score')
@@ -184,25 +184,35 @@ def plot_entropy(records, ax=None, savefig=True, legend=True):
     
     # Calculate entropy for each temperature
     entropy_table = []
+    std_table = []
     temperature_list = []
     for record in records:
         avg_entropy = avg_group(point_entropy(record['records'], n=64))
+        std_entropy = std_group(point_entropy(record['records'], n=64))
         temperature_list.append(record['temperature'])
         entropy_table.append(list(avg_entropy.values()))
+        std_table.append(list(std_entropy.values()))
 
     entropy_table = np.array(entropy_table)
+    std_table = np.array(std_table)
 
     # Sort entropy and temperature together
     temperature_list = np.array(temperature_list)
     sorted_indices = np.argsort(temperature_list)
     temperature_list = temperature_list[sorted_indices]
     entropy_table = entropy_table[sorted_indices]
+    std_table = std_table[sorted_indices]
 
     # Create entropy plot
     for i in range(entropy_table.shape[1]):
         ax.plot(temperature_list, entropy_table[:, i], '.-',
                 label=name_display[experiment_names[i]], 
                 color=colors[i])
+        ax.fill_between(temperature_list,
+                       entropy_table[:, i] - std_table[:, i],
+                       entropy_table[:, i] + std_table[:, i],
+                       color=colors[i],
+                       alpha=0.2)
     if legend:
         ax.legend()
     ax.set_xlabel('Temperature')
