@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import os
 import argparse
 import json
+import gym
 
 
 def save_experiment_data(folder, population, x0_population, observations, random_map, reward_history, controller_params):
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     parser.add_argument('--controller_type', type=str, default='discrete',
                       help='Type of controller, discrete or continuous')
     parser.add_argument('--T', type=int, default=10,
-                      help='Time horizon')
+                      help='Temperature')
     parser.add_argument('--scaling', type=float, default=100,
                       help='Scaling factor')
     parser.add_argument('--num_experiment', type=int, default=1,
@@ -73,8 +74,10 @@ if __name__ == '__main__':
     for arg in vars(args):
         print(f"{arg}: {getattr(args, arg)}")
 
+    # set seed
     torch.manual_seed(42)
     np.random.seed(42)
+
     all_reward_history = []
     all_endings = []
 
