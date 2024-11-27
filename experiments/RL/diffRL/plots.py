@@ -28,8 +28,8 @@ def make_video(folder, para, controller_type="discrete", env_name="CartPole-v1",
     elif controller_type == "continuous":
         controller = ContinuousController(model, env.action_space, factor=factor)
     
-
-    observation, info = env.reset(seed=42)
+    seed = np.random.randint(0, 1000000)
+    observation, info = env.reset(seed=seed)
     rewards = []
     infos = []
 
