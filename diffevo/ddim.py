@@ -66,6 +66,8 @@ class DDIMSchedulerCosine(DDIMScheduler):
         super().__init__(num_step)
         alpha = torch.cos(torch.linspace(0, torch.pi, num_step)) + 1
         self.alpha = alpha / 2
+        # rescaling alpha to [1e-3, 1-1e-3]
+        self.alpha = (self.alpha + 1e-3) * (1 - 1e-3) / (1 + 1e-3)
 
 class DDPMScheduler(DDIMScheduler):
     """
