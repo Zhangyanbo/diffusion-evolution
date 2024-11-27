@@ -10,7 +10,7 @@ from diffevo import LatentBayesianGenerator, RandomProjection, DDIMSchedulerCosi
 def compute_rewards(dim_in, dim_out, dim_hidden, param, env_name, n_hidden_layers=1, controller_type="discrete", factor=1):
     env = gym.make(env_name, render_mode='rgb_array')
 
-    seed = np.random.randint(0, 1000000)
+    seed = np.random.randint(0, np.iinfo(np.int32).max)
     observation, info = env.reset(seed=seed)
 
     model = ControllerMLP.from_parameter(dim_in, dim_out, dim_hidden, param, n_hidden_layers=n_hidden_layers)

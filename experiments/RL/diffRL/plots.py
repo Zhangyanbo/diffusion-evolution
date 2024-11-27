@@ -2,6 +2,7 @@ import torch
 import gym
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 from .models import ControllerMLP, DiscreteController, ContinuousController
 
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
@@ -28,7 +29,7 @@ def make_video(folder, para, controller_type="discrete", env_name="CartPole-v1",
     elif controller_type == "continuous":
         controller = ContinuousController(model, env.action_space, factor=factor)
     
-    seed = np.random.randint(0, 1000000)
+    seed = np.random.randint(0, np.iinfo(np.int32).max)
     observation, info = env.reset(seed=seed)
     rewards = []
     infos = []
