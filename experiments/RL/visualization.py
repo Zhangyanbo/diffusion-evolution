@@ -136,7 +136,7 @@ def compare_latent_plot(pop, pop_raw, pop_cmaes, random_map, pop_large, random_m
     x = torch.cat([random_map(pop).detach(), random_map(pop_raw).detach(), random_map_large(pop_large).detach()], dim=0) # not include cmaes
     x_mean = x.mean(dim=0)
     x_std = x.std(dim=0)
-    n = 2.0
+    n = 3.0
 
     ax.set_xlabel('$z_1$')
     ax.set_ylabel('$z_2$')
