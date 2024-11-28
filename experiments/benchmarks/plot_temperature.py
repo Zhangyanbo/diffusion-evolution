@@ -22,18 +22,24 @@ name_display = {
 }
 colors = ['#F5851E', '#E93A01', '#6F6E6E', '#800080', '#2B9BBF', '#46B3D5', '#73C5DF', '#94D3E7']
 
-def QD_score_from_trace(X, fitness, grid_size=1):
-    """Calculate QD-score from population trace and fitness values"""
-    X = torch.clamp(X, -4, 4)
-    grid_indices = (X * grid_size).long()
-    
-    unique_cells = {}
-    for idx, fit in zip(grid_indices, fitness):
-        cell_key = tuple(idx.tolist())
-        if cell_key not in unique_cells or fit > unique_cells[cell_key]:
-            unique_cells[cell_key] = fit.item()
-    
-    return sum(unique_cells.values())
+def QD_score(maps):
+    return np.sum([p.item() for x, p in maps.values()])
+
+def feature_descriptor(x, grid_size=1):
+    cls = tuple(torch.round(x * grid_size).long().tolist())
+    return cls
+
+def QD_score_from_trace(trace, fitness, grid_size=1):
+    maps = dict()
+    for x, f in zip(trace, fitness):
+        # clip x to [-4, 4]
+        x = torch.clamp(x, -4, 4)
+        cls = feature_descriptor(x, grid_size)
+        if cls not in maps:
+            maps[cls] = (x, f)
+        elif f > maps[cls][1]:
+            maps[cls] = (x, f)
+    return QD_score(maps)
 
 def load_data(folder='./data/temperatures/'):
     files = [f for f in os.listdir(folder) if f.endswith('.pt')]
