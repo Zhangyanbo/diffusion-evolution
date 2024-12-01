@@ -58,7 +58,7 @@ if __name__ == '__main__':
                       help='Factor parameter')
     parser.add_argument('--controller_type', type=str, default='discrete',
                       help='Type of controller, discrete or continuous')
-    parser.add_argument('--T', type=int, default=10,
+    parser.add_argument('--T', type=float, default=10,
                       help='Temperature')
     parser.add_argument('--scaling', type=float, default=100,
                       help='Scaling factor')
