@@ -1,0 +1,1 @@
+python run.py --exp_name DiffEvoLatent --method diff_evo --env_name BipedalWalker-v3 --latent_dim 2 --dim_in 24 --dim_out 4 --num_experiment 1 --controller_type continuous --factor 1 --scaling 10 --T 1

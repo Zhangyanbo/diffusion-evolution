@@ -82,6 +82,7 @@ def prepare_reward(rewards):
     return rewards
 
 def range_plot(x, color=None, label=None):
+    print(f'{len(x)} experiments, (num_generation, num_population)={x[0].shape}')
     x = prepare_reward(x)
     center = x.quantile(0.5, dim=-1)
     lower = x.quantile(0.25, dim=-1)
@@ -104,8 +105,12 @@ def reward_compare_plot(*rewards, labels=None, colors=None, ax=None):
     # ax.set_xlim(None, len(rewards[0]))
     ax.set_xlabel('generation')
     ax.set_ylabel('reward')
+
+    # set x-axis ticks with 2, 4, 6, 8, 10
+    ax.set_xticks([2, 4, 6, 8, 10])
+    ax.set_xticklabels([f'{tick}' for tick in [2, 4, 6, 8, 10]])
     
-    # set x-axis as reversed log scale
+    # set y-axis as reversed log scale
     ax.set_yscale('log')
     
     major_ticks = [10, 100, 300, 500]
@@ -122,23 +127,21 @@ def latent_plot(z, ax, color=None, alpha=1, label=None, zorder=1):
 def compare_latent_plot(pop, pop_raw, pop_cmaes, random_map, pop_large, random_map_large, ax=None):
     if ax is None:
         ax = plt.gca()
-    latent_plot(random_map(pop).detach()[-1], ax, color='#E93A01', label='latent diffusion evolution', alpha=0.5)
-    latent_plot(random_map(pop_raw).detach()[-1], ax, color='#46B3D5', alpha=0.1, label='diffusion evolution')
-    latent_plot(random_map(pop_cmaes).detach()[-1], ax, color='#6F6E6E', alpha=0.5, label='CMA-ES')
-    latent_plot(random_map_large(pop_large).detach()[-1], ax, color='#F5851E', alpha=0.25, label='latent DiffEvo (high-d)')
+    latent_plot(random_map(pop).detach(), ax, color='#E93A01', label='latent diffusion evolution', alpha=0.5)
+    latent_plot(random_map(pop_raw).detach(), ax, color='#46B3D5', label='DiffEvo', alpha=0.25)
+    latent_plot(random_map(pop_cmaes).detach(), ax, color='#6F6E6E', alpha=0.5, label='CMA-ES')
+    latent_plot(random_map_large(pop_large).detach(), ax, color='#F5851E', alpha=0.25, label='latent DiffEvo (high-d)')
+
+    # calculate the range of the data
+    x = torch.cat([random_map(pop).detach(), random_map(pop_raw).detach(), random_map_large(pop_large).detach()], dim=0) # not include cmaes
+    x_mean = x.mean(dim=0)
+    x_std = x.std(dim=0)
+    n = 3.0
 
     ax.set_xlabel('$z_1$')
     ax.set_ylabel('$z_2$')
-    ax.set_xlim(-1.1, 1.1)
-    ax.set_ylim(-1.1, 1.1)
-
-    # Create custom legend markers with alpha=1 using Line2D
-    latent_line = Line2D([0], [0], marker='.', color='#E93A01', linestyle='None', markersize=10, label='latent DiffEvo')
-    raw_line = Line2D([0], [0], marker='.', color='#46B3D5', linestyle='None', markersize=10, label='DiffEvo')
-    cmaes_line = Line2D([0], [0], marker='.', color='#6F6E6E', linestyle='None', markersize=10, label='CMA-ES')
-    large_line = Line2D([0], [0], marker='.', color='#F5851E', linestyle='None', markersize=10, label='latent DiffEvo (high-d)')
-    # Set the legend with the custom lines
-    # ax.legend(handles=[raw_line, latent_line, large_line, cmaes_line])
+    ax.set_xlim(x_mean[0]-n*x_std[0], x_mean[0]+n*x_std[0])
+    ax.set_ylim(x_mean[1]-n*x_std[1], x_mean[1]+n*x_std[1])
 
 def draw_cartpole_demo(ax):
     ax.axhline(y=0, color='gray', linestyle='--')
@@ -183,23 +186,24 @@ if __name__ == '__main__':
     np.random.seed(0)
     torch.manual_seed(0)
 
-    obs = torch.load('./data/latent/observations.pt') # [time, num_pop, [T, 4]]
+    path = './results/1.0/CartPole-v1'
+    obs = torch.load(f'{path}/DiffEvoLatent/observations.pt') # [time, num_pop, [T, 4]]
 
-    pop_latent = torch.load('./data/latent/population.pt')
-    rewards_latent = torch.load('./data/latent/reward_history.pt')
+    pop_latent = torch.load(f'{path}/DiffEvoLatent/population.pt')
+    rewards_latent = torch.load(f'{path}/DiffEvoLatent/reward_history.pt')
     random_map = RandomProjection(58, 2, normalize=True)
-    random_map.load_state_dict(torch.load('./data/latent/random_map.pt'))
+    random_map.load_state_dict(torch.load(f'{path}/DiffEvoLatent/random_map.pt'))
 
-    rewards_raw = torch.load('./data/raw/reward_history.pt')
-    pop_raw = torch.load('./data/raw/population.pt')
+    rewards_raw = torch.load(f'{path}/DiffEvoRaw/reward_history.pt')
+    pop_raw = torch.load(f'{path}/DiffEvoRaw/population.pt')
 
-    rewards_cmaes = torch.load('./data/cmaes/reward_history_cmaes.pt')
-    pop_cmaes = torch.load('./data/cmaes/population_cmaes.pt')
+    rewards_cmaes = torch.load(f'{path}/CMAES/reward_history.pt')
+    pop_cmaes = torch.load(f'{path}/CMAES/population.pt')
 
-    rewards_large = torch.load('./data/large/reward_history_large.pt')
-    pop_large = torch.load('./data/large/population_large.pt')
+    rewards_large = torch.load(f'{path}/DiffEvoLargeLatent/reward_history.pt')
+    pop_large = torch.load(f'{path}/DiffEvoLargeLatent/population.pt')
     random_map_large = RandomProjection(17410, 2, normalize=True)
-    random_map_large.load_state_dict(torch.load('./data/large/random_map_large.pt'))
+    random_map_large.load_state_dict(torch.load(f'{path}/DiffEvoLargeLatent/random_map.pt'))
 
     # generations = np.array([1, 40, 70, 90, 100])-1
     generations = np.array([2, 4, 6, 8, 10])-1
@@ -218,8 +222,7 @@ if __name__ == '__main__':
     # Bottom left plot
     ax2 = fig.add_subplot(gs[1, 0])
     reward_compare_plot(rewards_raw, rewards_latent, rewards_large, rewards_cmaes,
-                        labels=['DiffEvo',
-                                'latent DiffEvo', 'latent DiffEvo (high-d)', 'CMA-ES'],
+                        labels=['DiffEvo', 'latent DiffEvo', 'latent DiffEvo (high-d)', 'CMA-ES'],
                         colors=['#46B3D5', '#E93A01', '#F5851E', '#6F6E6E'], ax=ax2)
     ax2.set_title('(b) reward comparison')
 

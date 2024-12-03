@@ -26,8 +26,14 @@ pip install .
 
 Some benchmark codes requires dependencies, can be installed via:
 ```bash
-pip install cma
+pip install cma gym pygame tqdm matplotlib numpy==1.26.4 
 ```
+
+Also Pytorch version 2.5 or above is required
+```bash
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+```
+
 
 The benchmark fitness functions can be found here: https://github.com/bhartl/foobench 
 
