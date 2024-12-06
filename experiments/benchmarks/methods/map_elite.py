@@ -45,7 +45,7 @@ def MapEliteExperiment(obj, init_num_pop=100, num_iter=256, sigma_mut=0.1, sigma
     fitnesses = torch.stack([r for p, r in maps.values()])
     return populations, maps, fitnesses
 
-def MAPElite_plot(obj, maps, ax=None):
+def MAPElite_plot(obj, maps, ax=None, grid_size=1):
     if ax is None:
         fig, ax = plt.subplots()
 
@@ -54,6 +54,17 @@ def MAPElite_plot(obj, maps, ax=None):
     rewards = torch.stack([r for p, r in maps.values()])
 
     plt.scatter(pop_elite[:, 0], pop_elite[:, 1], c=x0_color, alpha=0.8, marker='.', zorder=10, edgecolors='none', s=(rewards + 0.1)*100)
+    # add grid to reflect the feature_descriptor
+    # Add grid lines for feature descriptor visualization
+    grid_step = grid_size  # Since plot range is -4 to 4
+    
+    # Vertical grid lines
+    for x in np.arange(-4, 4.1, grid_step):
+        plt.axvline(x=x+0.5, color='gray', linestyle=':', alpha=0.3, zorder=999)
+    
+    # Horizontal grid lines 
+    for y in np.arange(-4, 4.1, grid_step):
+        plt.axhline(y=y+0.5, color='gray', linestyle=':', alpha=0.3, zorder=999)
 
     plt.xlim(-4, 4)
     plt.ylim(-4, 4)
@@ -93,7 +104,7 @@ def MAPElite_benchmark(objs, num_steps, row=0, grid_size=1, sigma_mut=0.5, total
         record[foo_name] = prepare_data(populations, arg, fitnesses, maps)
         if plot:
             ax = plt.subplot(total_row, total_col, i + 1 + row * total_col)
-            MAPElite_plot(obj, maps, ax=ax)
+            MAPElite_plot(obj, maps, ax=ax, grid_size=grid_size)
             if i == 0:
                 ax.set_ylabel(f"MAP-Elite")
     
