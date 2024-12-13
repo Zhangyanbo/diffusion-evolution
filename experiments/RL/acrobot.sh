@@ -1,3 +1,0 @@
-python run.py --exp_name DiffEvoLatent --method diff_evo --env_name Acrobot-v1 --latent_dim 2 --dim_in 6 --dim_out 3 --num_experiment 1 --controller_type discrete --T 1 --scaling 1
-# python run.py --exp_name DiffEvoRaw --method diff_evo --env_name Acrobot-v1 --num_experiment 1 --dim_in 6 --dim_out 3 --controller_type discrete --T 1 --scaling 1
-# python run.py --exp_name CMAES --method cmaes --env_name Acrobot-v1 --num_experiment 1 --controller_type discrete --dim_in 6 --dim_out 3 --T 1 --scaling 1
