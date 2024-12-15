@@ -1,0 +1,3 @@
+python run.py --exp_name DiffEvoLatent --method diff_evo --env_name Pendulum-v1 --latent_dim 2 --dim_in 3 --dim_out 1 --num_experiment 1 --controller_type continuous --factor 2 --scaling 10 --T 1
+# python run.py --exp_name DiffEvoRaw --method diff_evo --env_name Pendulum-v1 --num_experiment 1 --dim_in 3 --dim_out 1 --controller_type continuous --factor 2 --scaling 1 --T 10
+# python run.py --exp_name CMAES --method cmaes --env_name Pendulum-v1 --num_experiment 1 --controller_type continuous --dim_in 3 --dim_out 1 --factor 2 --scaling 1 --T 10
