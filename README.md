@@ -105,3 +105,7 @@ trace = torch.stack(trace)
       url={https://arxiv.org/abs/2410.02543}, 
 }
 ```
+
+## License
+
+Our software is relased under modified Apache 2.0 License. We allow non-commercial usage for research, study, learning, etc., while limiting the commercial usage.
