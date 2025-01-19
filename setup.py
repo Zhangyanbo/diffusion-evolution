@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="diffevo",
-    version="1.0.1",
+    version="1.1.0",
     author="Yanbo Zhang",
     author_email="zhangybspm@gmail.com",
     description="Diffusion Evolutionary Algorithm",
@@ -17,7 +17,7 @@ setuptools.setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: Apache Software License (modified)",
         "Operating System :: OS Independent",
     ],
     packages=['diffevo'],
