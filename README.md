@@ -1,6 +1,6 @@
 # Diffusion Evolution
 
-This repo is for our preprint [Diffusion models are evolutionary algorithms](https://arxiv.org/abs/2410.02543), which anayatically proves that diffusion models are a type of evolutionary algorithm. This equivalence allows us to leverage advancements in diffusion models for evolutionary algorithm tasks, including accelerated sampling and latent space diffusion.
+This repo is for our ICLR 2025 paper [Diffusion models are evolutionary algorithms](https://openreview.net/forum?id=xVefsBbG2O), which anayatically proves that diffusion models are a type of evolutionary algorithm. This equivalence allows us to leverage advancements in diffusion models for evolutionary algorithm tasks, including accelerated sampling and latent space diffusion.
 
 ![](./experiments/2d_models/two_peaks/images/framwork.jpg)
 
