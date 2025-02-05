@@ -95,14 +95,13 @@ trace = torch.stack(trace)
 ### Cite our work
 
 ```
-@misc{zhang2024diffusionmodelsevolutionaryalgorithms,
-      title={Diffusion Models are Evolutionary Algorithms}, 
-      author={Yanbo Zhang and Benedikt Hartl and Hananel Hazan and Michael Levin},
-      year={2024},
-      eprint={2410.02543},
-      archivePrefix={arXiv},
-      primaryClass={cs.NE},
-      url={https://arxiv.org/abs/2410.02543}, 
+@inproceedings{
+zhang2025diffusion,
+title={Diffusion Models are Evolutionary Algorithms},
+author={Yanbo Zhang and Benedikt Hartl and Hananel Hazan and Michael Levin},
+booktitle={The Thirteenth International Conference on Learning Representations},
+year={2025},
+url={https://openreview.net/forum?id=xVefsBbG2O}
 }
 ```
 
