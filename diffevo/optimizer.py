@@ -11,7 +11,6 @@ class DiffEvo:
     Args:
         - num_step: int, the number of steps to evolve the population.
         - alpha: str or torch.Tensor, the alpha schedule for the diffusion process.
-        - density: str, the mode of the density function, only support 'uniform' and 'kde'.
         - sigma: str, the mode of the sigma, only support 'ddpm' and 'zero'.
         - sigma_scale: float, the scaling factor for the sigma.
         - sample_steps: list of int, the steps to evaluate the fitness.
@@ -19,7 +18,6 @@ class DiffEvo:
         - fitness_mapping: str, the mapping function from fitness to probability, only support 'identity' and 'energy'.
         - temperature: float or list of float, the temperature for the fitness mapping.
         - method: str, the method to estimate the density, only support 'bayesian' and 'nn'.
-        - kde_bandwidth: float, the bandwidth for the KDE density estimator.
         - nn: nn.Module, the neural network for the density estimator.
 
     Methods:
@@ -36,24 +34,17 @@ class DiffEvo:
 
     Example:
         ```python
-        optimizer = DiffEvo(num_step=100, sigma='ddpm', density='kde')
+        optimizer = DiffEvo(num_step=100)
         sampled, trace, fitness = optimizer.optimize(fitness_function_2d, torch.randn(512, 2), trace=True)
         ```
     """
 
     def __init__(self,
                  num_step: int = 100,
-                 density='kde',
-                 noise:float=1.0,
-                 scaling: float=1,
-                 fitness_mapping=None,
-                 kde_bandwidth=0.1):
+                 noise: float = 1.0,
+                 scaling: float = 1,
+                 fitness_mapping=None):
         self.num_step = num_step
-
-        if not density in ['uniform', 'kde']:
-            raise NotImplementedError(f'Density estimator {density} is not implemented.')
-        self.density = density
-        self.kde_bandwidth = kde_bandwidth
         self.scaling = scaling
         self.noise = noise
         if fitness_mapping is None:
@@ -71,7 +62,11 @@ class DiffEvo:
 
         for t, alpha in tqdm(self.scheduler):
             fitness = fit_fn(x * self.scaling)
-            generator = BayesianGenerator(x, self.fitness_mapping(fitness), alpha)
+            generator = BayesianGenerator(
+                x,
+                self.fitness_mapping(fitness),
+                alpha,
+            )
             x = generator(noise=self.noise)
             if trace:
                 population_trace.append(x)
