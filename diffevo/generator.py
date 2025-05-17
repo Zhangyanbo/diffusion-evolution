@@ -110,7 +110,12 @@ def ddpm_sigma(alphat, alphatp):
 
 
 class BayesianGenerator:
-    """Bayesian Generator for the DDIM algorithm."""
+    """Bayesian Generator for the DDIM algorithm.
+
+    Args:
+        density: legacy option for changing the density estimator.
+        h: bandwidth for KDE when ``density`` is ``'kde'``. Both rarely used.
+    """
     def __init__(self, x, fitness, alpha, density='uniform', h=0.1):
         self.x = x
         self.fitness = fitness
@@ -132,6 +137,7 @@ class BayesianGenerator:
 class LatentBayesianGenerator(BayesianGenerator):
     """Bayesian Generator for the DDIM algorithm."""
     def __init__(self, x, latent, fitness, alpha, density='uniform', h=0.1):
+        # density and h are legacy options kept for backward compatibility
         self.x = x
         self.latent = latent
         self.fitness = fitness
