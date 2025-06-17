@@ -119,7 +119,7 @@ class BayesianGenerator:
     def __init__(self, x, fitness, alpha, density='uniform', h=0.1):
         self.x = x
         if torch.any(fitness < 0):
-            raise ValueError('fitness_score must be non-negative')
+            raise ValueError('fitness must be non-negative')
         self.fitness = fitness
         self.alpha, self.alpha_past = alpha
         self.estimator = BayesianEstimator(self.x, self.fitness, self.alpha, density=density, h=h)
@@ -143,7 +143,7 @@ class LatentBayesianGenerator(BayesianGenerator):
         self.x = x
         self.latent = latent
         if torch.any(fitness < 0):
-            raise ValueError('fitness_score must be non-negative')
+            raise ValueError('fitness must be non-negative')
         self.fitness = fitness
         self.alpha, self.alpha_past = alpha
         self.estimator = LatentBayesianEstimator(self.x, self.latent, self.fitness, self.alpha, density=density, h=h)
