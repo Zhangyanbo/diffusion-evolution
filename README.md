@@ -55,6 +55,10 @@ for t, alpha in scheduler:
     x = generator(noise=0)
 ```
 
+The generator requires fitness values to be non-negative. If your objective
+returns negative values, please apply a mapping (see `diffevo.fitnessmapping`)
+to convert them before calling the generator.
+
 The following are two evolution trajectories of different fitness functions.
 
 ## Advanced Usage
